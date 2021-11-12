@@ -8,7 +8,6 @@ import android.view.View
 import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import assistant.Constantes
 import model.*
 import java.text.SimpleDateFormat
 import java.util.*
@@ -37,8 +36,8 @@ class MainActivity : AppCompatActivity() {
                 notasList.add(
                     NotaTexto(
                         1,
-                        SimpleDateFormat(Constantes.FORMATO_FECHA).format(Date()),
-                        SimpleDateFormat(Constantes.FORMATO_HORA).format(Date()),
+                        SimpleDateFormat("dd/MM/yyyy").format(Date()),
+                        SimpleDateFormat("hh:mm").format(Date()),
                         "Prueba",
                         "Probando notas de texto"
                     )

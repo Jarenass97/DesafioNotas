@@ -1,3 +1,12 @@
 <resources>
-    <string name="app_name">DesafioNotas</string>
+    <string name="app_name">Notes</string>
+    <string name="strTituloTipo">Note type</string>
+    <string name="strMensajeTipo">What kind of note do you want to create?</string>
+    <string name="strTipoTexto">Text</string>
+    <string name="strTipoTareas">Things to do</string>
+    <string name="strTituloBorrar">Delete note</string>
+    <string name="strMensajeBorrar">Are you sure to delete the note?</string>
+    <string name="strConfirmacionBorrar">Yes</string>
+    <string name="strNegacionBorrar">No</string>
+    <string name="strEliminando">Removing</string>
 </resources>

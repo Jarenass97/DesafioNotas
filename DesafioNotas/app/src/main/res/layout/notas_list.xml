@@ -1,20 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/lyNota"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/FondoNota"
     android:orientation="vertical">
 
     <LinearLayout
-        android:id="@+id/lyNota"
+        android:id="@+id/LinearLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#F8E77B"
         android:orientation="horizontal"
         android:paddingTop="20dp"
         android:paddingBottom="20dp">
 
         <TextView
             android:id="@+id/txtAsuntoNotaRecycler"
+            style="@style/txtAsuntos"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingLeft="20dp"
@@ -22,6 +25,7 @@
 
         <TextView
             android:id="@+id/txtHoraRecycler"
+            style="@style/txtHoras"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -29,5 +33,11 @@
             android:paddingRight="20dp"
             android:text="TextView" />
     </LinearLayout>
+
+    <View
+        android:id="@+id/divider"
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:background="?android:attr/listDivider" />
 
 </LinearLayout>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Notas</string>
+    <string name="strTituloTipo">Tipo de nota</string>
+    <string name="strMensajeTipo">¿Qué tipo de nota quiere crear?</string>
+    <string name="strTipoTexto">Texto</string>
+    <string name="strTipoTareas">Lista de tareas</string>
+    <string name="strTituloBorrar">Borrar nota</string>
+    <string name="strMensajeBorrar">¿Está seguro de eliminar la nota?</string>
+    <string name="strConfirmacionBorrar">Sí</string>
+    <string name="strNegacionBorrar">No</string>
+    <string name="strEliminando">Eliminando</string>
+</resources>

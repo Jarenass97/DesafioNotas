@@ -2,15 +2,17 @@ package adapters
 
 import android.content.Context
 import android.graphics.Color
+import android.opengl.Visibility
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.cardview.widget.CardView
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.example.desafionotas.R
 import model.Nota
@@ -44,8 +46,10 @@ class NotasAdapter(
     }
 
     fun deseleccionar() {
-        seleccionado = -1
-        notifyDataSetChanged()
+        if (seleccionado != -1) {
+            seleccionado = -1
+            notifyDataSetChanged()
+        }
     }
 
     class ViewHolder(view: View, ventana: AppCompatActivity) : RecyclerView.ViewHolder(view) {
@@ -53,29 +57,46 @@ class NotasAdapter(
         val hora = view.findViewById<TextView>(R.id.txtHoraRecycler)
         val item = view.findViewById<LinearLayout>(R.id.lyNota)
 
-        fun bind(nota: Nota, context: Context, pos: Int, notasAdapter: NotasAdapter) {
+        fun bind(nota: Nota, context: AppCompatActivity, pos: Int, notasAdapter: NotasAdapter) {
             asunto.text = nota.asunto
             hora.text = nota.hora
-            if (pos == seleccionado) with(item) { setBackgroundResource(R.color.FondoNotaSeleccionada) }
-            else with(item) { setBackgroundResource(R.color.FondoNota) }
+            if (pos == seleccionado) {
+                with(item) { setBackgroundResource(R.color.PrimaryVariant) }
+            } else {
+                with(item) { setBackgroundColor(Color.TRANSPARENT) }
+            }
             itemView.setOnClickListener(View.OnClickListener {
-                seleccionado = if (pos == seleccionado) {
-                    habilitarBotones(false)
-                    -1
-                } else {
-                    habilitarBotones(true)
-                    pos
-                }
-                notasAdapter.notifyDataSetChanged()
+                marcarSeleccion(notasAdapter, pos)
+            })
+            itemView.setOnLongClickListener(View.OnLongClickListener {
+                marcarSeleccion(notasAdapter, pos)
+                AlertDialog.Builder(context)
+                    .setTitle(context.getString(R.string.strTituloBorrar))
+                    .setMessage(context.getString(R.string.strMensajeBorrar))
+                    .setPositiveButton(context.getString(R.string.strConfirmacionBorrar)) { view, _ ->
+                        //eliminar nota
+                        Toast.makeText(
+                            context,
+                            context.getString(R.string.strEliminando),
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        notasAdapter.notifyDataSetChanged()
+                        view.dismiss()
+                    }
+                    .setNegativeButton(context.getString(R.string.strNegacionBorrar)) { view, _ ->
+                        view.dismiss()
+                    }
+                    .setCancelable(false)
+                    .create()
+                    .show()
+                true
             })
         }
 
-        private fun habilitarBotones(option: Boolean) {
-
+        private fun marcarSeleccion(notasAdapter: NotasAdapter, pos: Int) {
+            seleccionado = if (pos == seleccionado) -1
+            else pos
+            notasAdapter.notifyDataSetChanged()
         }
-
-
     }
-
-
 }
