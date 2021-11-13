@@ -10,4 +10,5 @@
     <string name="strConfirmacionBorrar">Oui</string>
     <string name="strNegacionBorrar">Non</string>
     <string name="strEliminando">Retrait</string>
+    <string name="strTituloAsunto">Affaire</string>
 </resources>

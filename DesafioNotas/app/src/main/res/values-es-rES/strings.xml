@@ -10,4 +10,5 @@
     <string name="strConfirmacionBorrar">Sí</string>
     <string name="strNegacionBorrar">No</string>
     <string name="strEliminando">Eliminando</string>
+    <string name="strTituloAsunto">Asunto</string>
 </resources>

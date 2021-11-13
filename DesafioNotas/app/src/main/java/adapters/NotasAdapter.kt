@@ -12,9 +12,11 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.example.desafionotas.R
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import model.Nota
 
 class NotasAdapter(
@@ -55,15 +57,16 @@ class NotasAdapter(
     class ViewHolder(view: View, ventana: AppCompatActivity) : RecyclerView.ViewHolder(view) {
         val asunto = view.findViewById<TextView>(R.id.txtAsuntoNotaRecycler)
         val hora = view.findViewById<TextView>(R.id.txtHoraRecycler)
-        val item = view.findViewById<LinearLayout>(R.id.lyNota)
+        val item = view.findViewById<ConstraintLayout>(R.id.lyNota)
+        val btnEditar = ventana.findViewById<FloatingActionButton>(R.id.btnEditarNota)
 
         fun bind(nota: Nota, context: AppCompatActivity, pos: Int, notasAdapter: NotasAdapter) {
             asunto.text = nota.asunto
             hora.text = nota.hora
             if (pos == seleccionado) {
-                with(item) { setBackgroundResource(R.color.PrimaryVariant) }
+                with(item) { setBackgroundResource(R.color.FondoNotaSeleccionada) }
             } else {
-                with(item) { setBackgroundColor(Color.TRANSPARENT) }
+                with(item) { setBackgroundResource(R.color.FondoNota) }
             }
             itemView.setOnClickListener(View.OnClickListener {
                 marcarSeleccion(notasAdapter, pos)
@@ -94,8 +97,13 @@ class NotasAdapter(
         }
 
         private fun marcarSeleccion(notasAdapter: NotasAdapter, pos: Int) {
-            seleccionado = if (pos == seleccionado) -1
-            else pos
+            seleccionado = if (pos == seleccionado) {
+                btnEditar.isVisible = false
+                -1
+            } else {
+                btnEditar.isVisible = true
+                pos
+            }
             notasAdapter.notifyDataSetChanged()
         }
     }
