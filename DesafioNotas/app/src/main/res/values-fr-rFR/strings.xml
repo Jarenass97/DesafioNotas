@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Remarques</string>
+    <string name="strTituloTipo">" Type de note"</string>
+    <string name="strMensajeTipo">Quel type de note voulez-vous créer ?</string>
+    <string name="strTipoTexto">Texte</string>
+    <string name="strTipoTareas">"Choses à faire "</string>
+    <string name="strTituloBorrar">Supprimer la note</string>
+    <string name="strMensajeBorrar">"Êtes-vous sûr de supprimer la note ? "</string>
+    <string name="strConfirmacionBorrar">Oui</string>
+    <string name="strNegacionBorrar">Non</string>
+    <string name="strEliminando">Retrait</string>
+    <string name="strTituloAsunto">Affaire</string>
+</resources>
