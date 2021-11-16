@@ -1,13 +1,9 @@
 package com.example.desafionotas
 
 import adapters.NotasAdapter
-import android.content.Context
-import android.content.DialogInterface
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.view.View
-import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
@@ -15,6 +11,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import assistant.Auxiliar
 import assistant.TipoNota
+import connection.Conexion
 import model.*
 import kotlin.collections.ArrayList
 
@@ -28,9 +25,12 @@ class MainActivity : AppCompatActivity() {
         rv = findViewById(R.id.rvNotas)
         rv.setHasFixedSize(true)
         rv.layoutManager = LinearLayoutManager(this)
-        notasList = ArrayList(0)
+        notasList = Conexion.getNotas(this)
         adaptador = NotasAdapter(this, notasList)
         rv.adapter = adaptador
+
+        Auxiliar.nextIdNota = Conexion.getNextIdNota(this)
+        Auxiliar.nextIdTarea = Conexion.getNextIdTarea(this)
     }
 
     fun addNota(view: View) {
@@ -62,7 +62,7 @@ class MainActivity : AppCompatActivity() {
                 asunto = if (asunto.isNotEmpty()) asunto
                 else "Sin asunto"
                 crearNota(tipoNota, asunto)
-                rv.adapter = NotasAdapter(this, notasList)
+                rv.adapter = NotasAdapter(this, Conexion.getNotas(this))
                 view.dismiss()
 
             }
@@ -74,25 +74,26 @@ class MainActivity : AppCompatActivity() {
     private fun crearNota(tipoNota: TipoNota, asunto: String) {
         when (tipoNota) {
             TipoNota.TEXTO -> {
-                notasList.add(
+                Conexion.addNota(
+                    this,
                     NotaTexto(
-                        1,
+                        Auxiliar.getNextIDnota(),
                         Auxiliar.fechaActual(),
                         Auxiliar.horaActual(),
-                        asunto,
-                        "Probando notas de texto"
+                        asunto
                     )
                 )
             }
             TipoNota.LISTA_TAREAS -> {
-                val nota = NotaTareas(
-                    1,
-                    Auxiliar.fechaActual(),
-                    Auxiliar.horaActual(),
-                    asunto
+                Conexion.addNota(
+                    this,
+                    NotaTareas(
+                        Auxiliar.getNextIDnota(),
+                        Auxiliar.fechaActual(),
+                        Auxiliar.horaActual(),
+                        asunto
+                    )
                 )
-                nota.addTarea("Tarea 1")
-                notasList.add(nota)
             }
         }
     }

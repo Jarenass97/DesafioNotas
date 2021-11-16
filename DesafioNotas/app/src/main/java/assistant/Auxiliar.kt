@@ -14,4 +14,38 @@ object Auxiliar {
     fun horaActual(): String {
         return SimpleDateFormat(FORMATO_HORA).format(Date())
     }
+
+    //BASE DE DATOS
+    val NOMBREBD = "notas.db"
+
+    //tabla Notas
+    var nextIdNota = 1
+    val TABLA__NOTAS = "NOTAS"
+    val ID__NOTAS = "ID"
+    val FECHA__NOTAS = "FECHA"
+    val HORA__NOTAS = "HORA"
+    val ASUNTO__NOTAS = "ASUNTO"
+    val TIPO__NOTAS = "TIPO"
+
+    fun getNextIDnota(): Int {
+        return nextIdNota++
+    }
+
+    //tabla notasTexto
+    val TABLA__NOTAS_TEXTO = "NOTAS_TEXTO"
+    val ID__NOTAS_TEXTO = "ID"
+    val TEXTO__NOTAS_TEXTO = "TEXTO"
+
+    //Tabla Tareas
+    var nextIdTarea = 1
+    val TABLA__TAREAS = "TAREAS"
+    val ID__TAREAS = "IDfe"
+    val ID_NOTA__TAREAS = "ID_NOTA"
+    val TAREA__TAREAS = "TAREA"
+    val REALIZADA__TAREAS = "REALIZADA"
+    val IMAGEN__TAREAS = "IMAGEN"
+
+    fun getNextIDTarea(): Int {
+        return nextIdTarea++
+    }
 }
