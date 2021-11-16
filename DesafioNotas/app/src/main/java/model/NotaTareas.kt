@@ -1,5 +1,6 @@
 package model
 
+import assistant.Auxiliar
 import assistant.TipoNota
 
 class NotaTareas(
@@ -11,6 +12,6 @@ class NotaTareas(
 ) :
     Nota(id, fecha, hora, asunto, tipo = TipoNota.LISTA_TAREAS) {
     fun addTarea(tarea: String) {
-        tareas.add(Tarea(tarea))
+        tareas.add(Tarea(Auxiliar.nextIdTarea, tarea))
     }
 }

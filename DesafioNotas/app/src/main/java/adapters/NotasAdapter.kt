@@ -14,6 +14,7 @@ import com.example.desafionotas.R
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import connection.Conexion
 import model.Nota
+import model.NotaTexto
 
 class NotasAdapter(
     var context: AppCompatActivity,
@@ -56,12 +57,14 @@ class NotasAdapter(
 
     class ViewHolder(view: View, ventana: AppCompatActivity) : RecyclerView.ViewHolder(view) {
         val asunto = view.findViewById<TextView>(R.id.txtAsuntoNotaRecycler)
+        val tipo = view.findViewById<TextView>(R.id.txtTipoNota)
         val hora = view.findViewById<TextView>(R.id.txtHoraRecycler)
         val item = view.findViewById<ConstraintLayout>(R.id.lyNota)
         val btnEditar = ventana.findViewById<FloatingActionButton>(R.id.btnEditarNota)
 
         fun bind(nota: Nota, context: AppCompatActivity, pos: Int, notasAdapter: NotasAdapter) {
             asunto.text = nota.asunto
+            if (nota is NotaTexto) tipo.text = "Texto" else tipo.text = "Lista tareas"
             hora.text = nota.hora
             if (pos == seleccionado) {
                 with(item) { setBackgroundResource(R.color.FondoNotaSeleccionada) }

@@ -3,6 +3,7 @@ package com.example.desafionotas
 import adapters.NotasAdapter
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.EditText
 import android.widget.Toast
@@ -62,7 +63,6 @@ class MainActivity : AppCompatActivity() {
                 asunto = if (asunto.isNotEmpty()) asunto
                 else "Sin asunto"
                 crearNota(tipoNota, asunto)
-                rv.adapter = NotasAdapter(this, Conexion.getNotas(this))
                 view.dismiss()
 
             }
@@ -96,6 +96,8 @@ class MainActivity : AppCompatActivity() {
                 )
             }
         }
+        adaptador = NotasAdapter(this, Conexion.getNotas(this))
+        rv.adapter = adaptador
     }
 
     fun editar(view: View) {
