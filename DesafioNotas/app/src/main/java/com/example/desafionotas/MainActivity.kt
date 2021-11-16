@@ -1,13 +1,9 @@
 package com.example.desafionotas
 
 import adapters.NotasAdapter
-import android.content.Context
-import android.content.DialogInterface
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.view.View
-import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
@@ -33,7 +29,8 @@ class MainActivity : AppCompatActivity() {
         adaptador = NotasAdapter(this, notasList)
         rv.adapter = adaptador
 
-        Auxiliar.nextId = Conexion.getNextId(this)
+        Auxiliar.nextIdNota = Conexion.getNextIdNota(this)
+        Auxiliar.nextIdTarea = Conexion.getNextIdTarea(this)
     }
 
     fun addNota(view: View) {
@@ -80,11 +77,10 @@ class MainActivity : AppCompatActivity() {
                 Conexion.addNota(
                     this,
                     NotaTexto(
-                        Auxiliar.getNextID(),
+                        Auxiliar.getNextIDnota(),
                         Auxiliar.fechaActual(),
                         Auxiliar.horaActual(),
-                        asunto,
-                        "Probando notas de texto"
+                        asunto
                     )
                 )
             }
@@ -92,7 +88,7 @@ class MainActivity : AppCompatActivity() {
                 Conexion.addNota(
                     this,
                     NotaTareas(
-                        Auxiliar.getNextID(),
+                        Auxiliar.getNextIDnota(),
                         Auxiliar.fechaActual(),
                         Auxiliar.horaActual(),
                         asunto

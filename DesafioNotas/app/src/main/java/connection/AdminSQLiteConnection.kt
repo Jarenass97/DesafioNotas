@@ -37,7 +37,7 @@ class AdminSQLiteConnection(
 
     private fun createTareas(): String {
         return "CREATE TABLE ${Auxiliar.TABLA__TAREAS}(" +
-                "ID integer primary key autoincrement," +
+                "${Auxiliar.ID__TAREAS} int primary key," +
                 "${Auxiliar.ID_NOTA__TAREAS} int," +
                 "${Auxiliar.TAREA__TAREAS} text," +
                 "${Auxiliar.REALIZADA__TAREAS} bit," +

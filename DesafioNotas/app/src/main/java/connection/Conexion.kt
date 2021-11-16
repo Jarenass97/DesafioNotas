@@ -30,6 +30,7 @@ object Conexion {
         val admin = AdminSQLiteConnection(context, nombreBD, null, 1)
         val bd = admin.writableDatabase
         val reg = ContentValues()
+        reg.put(Auxiliar.ID__TAREAS, tarea.id)
         reg.put(Auxiliar.ID_NOTA__TAREAS, idNota)
         reg.put(Auxiliar.TAREA__TAREAS, tarea.tarea)
         reg.put(Auxiliar.REALIZADA__TAREAS, tarea.realizada)
@@ -112,38 +113,63 @@ object Conexion {
     private fun getTareas(bd: SQLiteDatabase, idNota: Int): ArrayList<Tarea> {
         val tareas = ArrayList<Tarea>(0)
         val reg = bd.rawQuery(
-            "select ${Auxiliar.TAREA__TAREAS}, ${Auxiliar.REALIZADA__TAREAS}, ${Auxiliar.IMAGEN__TAREAS} from ${Auxiliar.TABLA__TAREAS} where ${Auxiliar.ID_NOTA__TAREAS}=$idNota",
+            "select ${Auxiliar.ID__TAREAS} ${Auxiliar.TAREA__TAREAS}, ${Auxiliar.REALIZADA__TAREAS}, ${Auxiliar.IMAGEN__TAREAS} from ${Auxiliar.TABLA__TAREAS} where ${Auxiliar.ID_NOTA__TAREAS}=$idNota",
             null
         )
         while (reg.moveToNext()) {
             tareas.add(
                 Tarea(
-                    reg.getString(0),
-                    reg.getInt(1) == 1,
-                    reg.getString(2)
+                    reg.getInt(0),
+                    reg.getString(1),
+                    reg.getInt(2) == 1,
+                    reg.getString(3)
                 )
             )
         }
         return tareas
     }
 
-    /* fun modSO(context: Context, encuesta: Encuesta, so: String): Int {
-         val admin = AdminSQLiteConexion(context, nombreBD, null, 1)
-         val bd = admin.writableDatabase
-         val reg = ContentValues()
-         reg.put(Auxiliar.NOMBRE_ENCUESTAS, encuesta.nombre)
-         reg.put(Auxiliar.SO_ENCUESTAS, so)
-         reg.put(Auxiliar.HORAS_ESTUDIO_ENCUESTAS, encuesta.horasEstudio)
-         val can = bd.update(
-             Auxiliar.TABLA_ENCUESTAS,
-             reg,
-             "${Auxiliar.ID_ENCUESTAS}=${encuesta.id}",
-             null
-         )
-         bd.close()
-         return can
-     }
- */
+    fun modAsuntoNota(context: Context, nota: Nota, nuevoAsunto: String): Int {
+        val admin = AdminSQLiteConnection(context, nombreBD, null, 1)
+        val bd = admin.writableDatabase
+        val reg = ContentValues()
+        reg.put(Auxiliar.HORA__NOTAS, Auxiliar.horaActual())
+        reg.put(Auxiliar.ASUNTO__NOTAS, nuevoAsunto)
+        val can = bd.update(
+            Auxiliar.TABLA__NOTAS,
+            reg,
+            "${Auxiliar.ID__NOTAS}=${nota.id}",
+            null
+        )
+        bd.close()
+        return can
+    }
+
+    fun modTextoNota(context: Context, nota: Nota, nuevoTexto: String): Int {
+        val admin = AdminSQLiteConnection(context, nombreBD, null, 1)
+        val bd = admin.writableDatabase
+        var reg = ContentValues()
+        reg.put(Auxiliar.TEXTO__NOTAS_TEXTO, nuevoTexto)
+        val cantidad = bd.update(
+            Auxiliar.TABLA__NOTAS_TEXTO,
+            reg,
+            "${Auxiliar.ID__NOTAS_TEXTO}=${nota.id}",
+            null
+        )
+        if (cantidad > 0) {
+            reg = ContentValues()
+            reg.put(Auxiliar.HORA__NOTAS, Auxiliar.horaActual())
+            bd.update(
+                Auxiliar.TABLA__NOTAS,
+                reg,
+                "${Auxiliar.ID__NOTAS}=${nota.id}",
+                null
+            )
+        }
+        bd.close()
+        return cantidad
+    }
+
     fun delNota(context: Context, nota: Nota): Int {
         val admin = AdminSQLiteConnection(context, nombreBD, null, 1)
         val bd = admin.writableDatabase
@@ -157,7 +183,7 @@ object Conexion {
         return cantidad
     }
 
-    fun getNextId(context: Context): Int {
+    fun getNextIdNota(context: Context): Int {
         var nextID = 1
         val admin = AdminSQLiteConnection(context, nombreBD, null, 1)
         val bd = admin.writableDatabase
@@ -165,6 +191,19 @@ object Conexion {
         if (reg.moveToLast()) {
             nextID = reg.getInt(0) + 1
         }
+        bd.close()
+        return nextID
+    }
+
+    fun getNextIdTarea(context: Context): Int {
+        var nextID = 1
+        val admin = AdminSQLiteConnection(context, nombreBD, null, 1)
+        val bd = admin.writableDatabase
+        val reg = bd.rawQuery("select ${Auxiliar.ID__TAREAS} from ${Auxiliar.TABLA__TAREAS}", null)
+        if (reg.moveToLast()) {
+            nextID = reg.getInt(0) + 1
+        }
+        bd.close()
         return nextID
     }
 }

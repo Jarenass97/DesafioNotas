@@ -19,7 +19,7 @@ object Auxiliar {
     val NOMBREBD = "notas.db"
 
     //tabla Notas
-    var nextId = 1
+    var nextIdNota = 1
     val TABLA__NOTAS = "NOTAS"
     val ID__NOTAS = "ID"
     val FECHA__NOTAS = "FECHA"
@@ -27,8 +27,8 @@ object Auxiliar {
     val ASUNTO__NOTAS = "ASUNTO"
     val TIPO__NOTAS = "TIPO"
 
-    fun getNextID(): Int {
-        return nextId++
+    fun getNextIDnota(): Int {
+        return nextIdNota++
     }
 
     //tabla notasTexto
@@ -37,9 +37,15 @@ object Auxiliar {
     val TEXTO__NOTAS_TEXTO = "TEXTO"
 
     //Tabla Tareas
+    var nextIdTarea = 1
     val TABLA__TAREAS = "TAREAS"
+    val ID__TAREAS = "IDfe"
     val ID_NOTA__TAREAS = "ID_NOTA"
     val TAREA__TAREAS = "TAREA"
     val REALIZADA__TAREAS = "REALIZADA"
     val IMAGEN__TAREAS = "IMAGEN"
+
+    fun getNextIDTarea(): Int {
+        return nextIdTarea++
+    }
 }
