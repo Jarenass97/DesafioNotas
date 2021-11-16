@@ -1,13 +1,8 @@
 package adapters
 
-import android.content.Context
-import android.graphics.Color
-import android.opengl.Visibility
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
@@ -17,6 +12,7 @@ import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.example.desafionotas.R
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import connection.Conexion
 import model.Nota
 
 class NotasAdapter(
@@ -54,6 +50,10 @@ class NotasAdapter(
         }
     }
 
+    private fun delNota(nota: Nota) {
+        notas.remove(nota)
+    }
+
     class ViewHolder(view: View, ventana: AppCompatActivity) : RecyclerView.ViewHolder(view) {
         val asunto = view.findViewById<TextView>(R.id.txtAsuntoNotaRecycler)
         val hora = view.findViewById<TextView>(R.id.txtHoraRecycler)
@@ -77,7 +77,10 @@ class NotasAdapter(
                     .setTitle(context.getString(R.string.strTituloBorrar))
                     .setMessage(context.getString(R.string.strMensajeBorrar))
                     .setPositiveButton(context.getString(R.string.strConfirmacionBorrar)) { view, _ ->
-                        //eliminar nota
+                        Conexion.delNota(context, nota)
+                        notasAdapter.delNota(nota)
+                        notasAdapter.deseleccionar()
+                        habilitarBoton(false)
                         Toast.makeText(
                             context,
                             context.getString(R.string.strEliminando),
@@ -96,15 +99,20 @@ class NotasAdapter(
             })
         }
 
+        private fun habilitarBoton(opcion: Boolean) {
+            btnEditar.isVisible = opcion
+        }
+
         private fun marcarSeleccion(notasAdapter: NotasAdapter, pos: Int) {
             seleccionado = if (pos == seleccionado) {
-                btnEditar.isVisible = false
+                habilitarBoton(false)
                 -1
             } else {
-                btnEditar.isVisible = true
+                habilitarBoton(true)
                 pos
             }
             notasAdapter.notifyDataSetChanged()
         }
     }
+
 }

@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import assistant.Auxiliar
 import assistant.TipoNota
+import connection.Conexion
 import model.*
 import kotlin.collections.ArrayList
 
@@ -28,9 +29,11 @@ class MainActivity : AppCompatActivity() {
         rv = findViewById(R.id.rvNotas)
         rv.setHasFixedSize(true)
         rv.layoutManager = LinearLayoutManager(this)
-        notasList = ArrayList(0)
+        notasList = Conexion.getNotas(this)
         adaptador = NotasAdapter(this, notasList)
         rv.adapter = adaptador
+
+        Auxiliar.nextId = Conexion.getNextId(this)
     }
 
     fun addNota(view: View) {
@@ -62,7 +65,7 @@ class MainActivity : AppCompatActivity() {
                 asunto = if (asunto.isNotEmpty()) asunto
                 else "Sin asunto"
                 crearNota(tipoNota, asunto)
-                rv.adapter = NotasAdapter(this, notasList)
+                rv.adapter = NotasAdapter(this, Conexion.getNotas(this))
                 view.dismiss()
 
             }
@@ -74,9 +77,10 @@ class MainActivity : AppCompatActivity() {
     private fun crearNota(tipoNota: TipoNota, asunto: String) {
         when (tipoNota) {
             TipoNota.TEXTO -> {
-                notasList.add(
+                Conexion.addNota(
+                    this,
                     NotaTexto(
-                        1,
+                        Auxiliar.getNextID(),
                         Auxiliar.fechaActual(),
                         Auxiliar.horaActual(),
                         asunto,
@@ -85,14 +89,15 @@ class MainActivity : AppCompatActivity() {
                 )
             }
             TipoNota.LISTA_TAREAS -> {
-                val nota = NotaTareas(
-                    1,
-                    Auxiliar.fechaActual(),
-                    Auxiliar.horaActual(),
-                    asunto
+                Conexion.addNota(
+                    this,
+                    NotaTareas(
+                        Auxiliar.getNextID(),
+                        Auxiliar.fechaActual(),
+                        Auxiliar.horaActual(),
+                        asunto
+                    )
                 )
-                nota.addTarea("Tarea 1")
-                notasList.add(nota)
             }
         }
     }
