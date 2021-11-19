@@ -11,4 +11,10 @@
     <string name="strNegacionBorrar">No</string>
     <string name="strEliminando">Eliminando</string>
     <string name="strTituloAsunto">Asunto</string>
+    <string name="strHaceYears">years ago</string>
+    <string name="strHaceDias">days ago</string>
+    <string name="strHaceMeses">months ago</string>
+    <string name="strHaceHoras">hours ago</string>
+    <string name="strHaceMinutos">minutes ago</string>
+    <string name="strMenosUnMin">less than a minute ago</string>
 </resources>

@@ -1,6 +1,7 @@
 package model
 
 import assistant.TipoNota
+import java.io.Serializable
 import java.util.*
 
 open abstract class Nota(
@@ -9,5 +10,5 @@ open abstract class Nota(
     var hora: String,
     var asunto: String,
     var tipo: TipoNota
-) {
+) : Serializable {
 }

@@ -1,6 +1,7 @@
 package com.example.desafionotas
 
 import adapters.NotasAdapter
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -34,6 +35,13 @@ class MainActivity : AppCompatActivity() {
         Auxiliar.nextIdTarea = Conexion.getNextIdTarea(this)
     }
 
+    override fun onResume() {
+        super.onResume()
+        notasList = Conexion.getNotas(this)
+        adaptador = NotasAdapter(this, notasList)
+        rv.adapter = adaptador
+    }
+
     fun addNota(view: View) {
         AlertDialog.Builder(this)
             .setTitle(getString(R.string.strTituloTipo))
@@ -64,7 +72,6 @@ class MainActivity : AppCompatActivity() {
                 else "Sin asunto"
                 crearNota(tipoNota, asunto)
                 view.dismiss()
-
             }
             .setCancelable(false)
             .create()
@@ -72,36 +79,39 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun crearNota(tipoNota: TipoNota, asunto: String) {
+        lateinit var nota: Nota
         when (tipoNota) {
             TipoNota.TEXTO -> {
-                Conexion.addNota(
-                    this,
-                    NotaTexto(
-                        Auxiliar.getNextIDnota(),
-                        Auxiliar.fechaActual(),
-                        Auxiliar.horaActual(),
-                        asunto
-                    )
+                nota = NotaTexto(
+                    Auxiliar.getNextIDnota(),
+                    Auxiliar.fechaActual(),
+                    Auxiliar.horaActual(),
+                    asunto
                 )
             }
             TipoNota.LISTA_TAREAS -> {
-                Conexion.addNota(
-                    this,
-                    NotaTareas(
-                        Auxiliar.getNextIDnota(),
-                        Auxiliar.fechaActual(),
-                        Auxiliar.horaActual(),
-                        asunto
-                    )
+                nota = NotaTareas(
+                    Auxiliar.getNextIDnota(),
+                    Auxiliar.fechaActual(),
+                    Auxiliar.horaActual(),
+                    asunto
                 )
             }
         }
+        Conexion.addNota(this, nota)
+        abrirDetalle(nota)
         adaptador = NotasAdapter(this, Conexion.getNotas(this))
         rv.adapter = adaptador
     }
 
     fun editar(view: View) {
         val nota = adaptador.getSelected()
-        Toast.makeText(this, "Abriendo ${nota.asunto}", Toast.LENGTH_SHORT).show()
+        abrirDetalle(nota)
+    }
+
+    fun abrirDetalle(nota: Nota) {
+        val intent = Intent(this, DetalleNotasActivity::class.java)
+        intent.putExtra("nota", nota)
+        startActivity(intent)
     }
 }
