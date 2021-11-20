@@ -28,19 +28,19 @@
             android:inputType="textPersonName" />
 
         <ImageButton
-            android:id="@+id/btnGuardarDetalle"
-            style="@style/imgButton"
-            android:layout_marginStart="20dp"
-            android:onClick="guardar"
-            android:scaleType="fitCenter"
-            app:srcCompat="@drawable/ic_baseline_save_24" />
-
-        <ImageButton
             android:id="@+id/btnCompartirNota"
             style="@style/imgButton"
             android:layout_marginStart="20dp"
             android:onClick="compartir"
             app:srcCompat="@drawable/ic_baseline_share_24" />
+
+        <ImageButton
+            android:id="@+id/btnGuardarDetalle"
+            style="@style/imgButton"
+            android:layout_marginStart="20dp"
+            android:onClick="btnGuardar"
+            android:scaleType="fitCenter"
+            app:srcCompat="@drawable/ic_baseline_save_24" />
     </LinearLayout>
 
     <LinearLayout
@@ -118,6 +118,7 @@
                 android:layout_marginEnd="40dp"
                 android:layout_marginBottom="40dp"
                 android:clickable="true"
+                android:onClick="addTarea"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="1.0"

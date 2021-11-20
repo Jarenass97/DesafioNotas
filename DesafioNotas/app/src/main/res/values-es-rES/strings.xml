@@ -5,10 +5,10 @@
     <string name="strMensajeTipo">¿Qué tipo de nota quiere crear?</string>
     <string name="strTipoTexto">Texto</string>
     <string name="strTipoTareas">Lista de tareas</string>
-    <string name="strTituloBorrar">Borrar nota</string>
-    <string name="strMensajeBorrar">¿Está seguro de eliminar la nota?</string>
-    <string name="strConfirmacionBorrar">Sí</string>
-    <string name="strNegacionBorrar">No</string>
+    <string name="strTituloBorrar">Borrar</string>
+    <string name="strMensajeBorrar">¿Está seguro de eliminar?</string>
+    <string name="strConfirmacion">Sí</string>
+    <string name="strNegacion">No</string>
     <string name="strEliminando">Eliminando</string>
     <string name="strTituloAsunto">Asunto</string>
     <string name="strHaceYears">years ago</string>
@@ -17,4 +17,10 @@
     <string name="strHaceHoras">hours ago</string>
     <string name="strHaceMinutos">minutes ago</string>
     <string name="strMenosUnMin">less than a minute ago</string>
+    <string name="strTarea">Tarea</string>
+    <string name="strContactos">Contactos</string>
+    <string name="strMensajeEnviado">Mensaje enviado</string>
+    <string name="strTituloGuardar">Guardar cambios</string>
+    <string name="strMensajeGuardar">¿Desea guardar los cambios?</string>
+    <string name="strContactoNoSeleccionado">No has seleccionado ningún contacto</string>
 </resources>

@@ -9,10 +9,12 @@ import android.view.View
 import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import assistant.Auxiliar
 import assistant.TipoNota
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import connection.Conexion
 import model.*
 import kotlin.collections.ArrayList
@@ -21,9 +23,12 @@ class MainActivity : AppCompatActivity() {
     lateinit var rv: RecyclerView
     lateinit var adaptador: NotasAdapter
     lateinit var notasList: ArrayList<Nota>
+    lateinit var btnEditar: FloatingActionButton
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        btnEditar = findViewById(R.id.btnEditarNota)
         rv = findViewById(R.id.rvNotas)
         rv.setHasFixedSize(true)
         rv.layoutManager = LinearLayoutManager(this)
@@ -39,6 +44,8 @@ class MainActivity : AppCompatActivity() {
         super.onResume()
         notasList = Conexion.getNotas(this)
         adaptador = NotasAdapter(this, notasList)
+        adaptador.deseleccionar()
+        btnEditar.isVisible = false
         rv.adapter = adaptador
     }
 
@@ -110,8 +117,11 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun abrirDetalle(nota: Nota) {
-        val intent = Intent(this, DetalleNotasActivity::class.java)
-        intent.putExtra("nota", nota)
-        startActivity(intent)
+        //borrar if (para que no se abran las de tipo tarea porque da error)
+        if (nota.tipo == TipoNota.TEXTO) {
+            val intent = Intent(this, DetalleNotasActivity::class.java)
+            intent.putExtra("nota", nota)
+            startActivity(intent)
+        }
     }
 }

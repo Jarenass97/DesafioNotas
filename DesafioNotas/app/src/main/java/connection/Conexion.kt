@@ -3,6 +3,7 @@ package connection
 import android.content.ContentValues
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
+import androidx.core.database.getStringOrNull
 import assistant.Auxiliar
 import assistant.TipoNota
 import model.Nota
@@ -23,7 +24,14 @@ object Conexion {
         reg.put(Auxiliar.ASUNTO__NOTAS, nota.asunto)
         reg.put(Auxiliar.TIPO__NOTAS, if (nota.tipo == TipoNota.TEXTO) 0 else 1)
         bd.insert(Auxiliar.TABLA__NOTAS, null, reg)
+        addTexto(bd,nota.id)
         bd.close()
+    }
+    private fun addTexto(bd:SQLiteDatabase, idNota: Int) {
+        val reg = ContentValues()
+        reg.put(Auxiliar.ID__NOTAS_TEXTO, idNota)
+        reg.put(Auxiliar.TEXTO__NOTAS_TEXTO, "")
+        bd.insert(Auxiliar.TABLA__NOTAS_TEXTO, null, reg)
     }
 
     fun addTarea(context: Context, idNota: Int, tarea: Tarea) {
@@ -33,18 +41,10 @@ object Conexion {
         reg.put(Auxiliar.ID__TAREAS, tarea.id)
         reg.put(Auxiliar.ID_NOTA__TAREAS, idNota)
         reg.put(Auxiliar.TAREA__TAREAS, tarea.tarea)
-        reg.put(Auxiliar.REALIZADA__TAREAS, tarea.realizada)
+        reg.put(Auxiliar.REALIZADA__TAREAS, if (tarea.realizada) 1 else 0)
         reg.put(Auxiliar.IMAGEN__TAREAS, tarea.img)
         bd.insert(Auxiliar.TABLA__TAREAS, null, reg)
-    }
-
-    fun addTexto(context: Context, idNota: Int, texto: String) {
-        val admin = AdminSQLiteConnection(context, nombreBD, null, 1)
-        val bd = admin.writableDatabase
-        val reg = ContentValues()
-        reg.put(Auxiliar.ID__NOTAS_TEXTO, idNota)
-        reg.put(Auxiliar.TEXTO__NOTAS_TEXTO, texto)
-        bd.insert(Auxiliar.TABLA__NOTAS_TEXTO, null, reg)
+        bd.close()
     }
 
     fun numNotas(context: Context): Int {
@@ -122,7 +122,7 @@ object Conexion {
                     reg.getInt(0),
                     reg.getString(1),
                     reg.getInt(2) == 1,
-                    reg.getString(3)
+                    reg.getStringOrNull(3)
                 )
             )
         }
@@ -205,5 +205,18 @@ object Conexion {
         }
         bd.close()
         return nextID
+    }
+
+    fun delTarea(context: Context, tarea: Tarea): Int {
+        val admin = AdminSQLiteConnection(context, nombreBD, null, 1)
+        val bd = admin.writableDatabase
+        val cantidad =
+            bd.delete(
+                Auxiliar.TABLA__TAREAS,
+                "${Auxiliar.ID__TAREAS}=${tarea.id}",
+                null
+            )
+        bd.close()
+        return cantidad
     }
 }

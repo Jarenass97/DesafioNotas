@@ -79,7 +79,7 @@ class NotasAdapter(
                 AlertDialog.Builder(context)
                     .setTitle(context.getString(R.string.strTituloBorrar))
                     .setMessage(context.getString(R.string.strMensajeBorrar))
-                    .setPositiveButton(context.getString(R.string.strConfirmacionBorrar)) { view, _ ->
+                    .setPositiveButton(context.getString(R.string.strConfirmacion)) { view, _ ->
                         Conexion.delNota(context, nota)
                         notasAdapter.delNota(nota)
                         notasAdapter.deseleccionar()
@@ -92,7 +92,7 @@ class NotasAdapter(
                         notasAdapter.notifyDataSetChanged()
                         view.dismiss()
                     }
-                    .setNegativeButton(context.getString(R.string.strNegacionBorrar)) { view, _ ->
+                    .setNegativeButton(context.getString(R.string.strNegacion)) { view, _ ->
                         view.dismiss()
                     }
                     .setCancelable(false)
