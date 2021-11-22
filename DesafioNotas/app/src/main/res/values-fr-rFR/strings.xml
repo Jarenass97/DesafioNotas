@@ -23,4 +23,6 @@
     <string name="strTituloGuardar">" Sauvegarder les modifications"</string>
     <string name="strMensajeGuardar">" Souhaitez-vous enregistrer les modifications ?"</string>
     <string name="strContactoNoSeleccionado">" Vous n'avez sélectionné aucun contact"</string>
+    <string name="strSinAsunto">" Pas de sujet"</string>
+    <string name="strIndefinida">" Indéfinie"</string>
 </resources>

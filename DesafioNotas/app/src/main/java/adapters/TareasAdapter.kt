@@ -11,12 +11,13 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
+import com.example.desafionotas.DetalleNotasActivity
 import com.example.desafionotas.R
 import connection.Conexion
 import model.Tarea
 
 class TareasAdapter(
-    var context: AppCompatActivity,
+    var context: DetalleNotasActivity,
     var tareas: ArrayList<Tarea>
 ) :
     RecyclerView.Adapter<TareasAdapter.ViewHolder>() {
@@ -39,23 +40,25 @@ class TareasAdapter(
         return tareas.size
     }
 
-    fun getSelected(): Tarea {
-        return tareas.get(seleccionado)
-    }
-
     private fun delTarea(tarea: Tarea) {
         tareas.remove(tarea)
     }
 
-    class ViewHolder(view: View, ventana: AppCompatActivity) : RecyclerView.ViewHolder(view) {
+    class ViewHolder(view: View, ventana: DetalleNotasActivity) : RecyclerView.ViewHolder(view) {
         val imagen = view.findViewById<ImageButton>(R.id.imgTarea)
         val descTarea = view.findViewById<TextView>(R.id.txtTarea)
         val checked = view.findViewById<ImageView>(R.id.imgCheck)
+        val ventana = ventana
 
         fun bind(tarea: Tarea, context: AppCompatActivity, pos: Int, tareasAdapter: TareasAdapter) {
             descTarea.text = tarea.tarea
+            checked.isVisible = tarea.realizada
+            imagen.setOnClickListener(View.OnClickListener {
+                val img = changeImg()
+            })
             itemView.setOnClickListener(View.OnClickListener {
                 checked.isVisible = !checked.isVisible
+                tarea.realizada = true
             })
             itemView.setOnLongClickListener(View.OnLongClickListener {
                 marcarSeleccion(tareasAdapter, pos)
@@ -63,7 +66,6 @@ class TareasAdapter(
                     .setTitle(context.getString(R.string.strTituloBorrar))
                     .setMessage(context.getString(R.string.strMensajeBorrar))
                     .setPositiveButton(context.getString(R.string.strConfirmacion)) { view, _ ->
-                        Conexion.delTarea(context, tarea)
                         tareasAdapter.delTarea(tarea)
                         Toast.makeText(
                             context,
@@ -81,6 +83,10 @@ class TareasAdapter(
                     .show()
                 true
             })
+        }
+
+        private fun changeImg(): Any {
+            return "imagen"
         }
 
         private fun marcarSeleccion(tareasAdapter: TareasAdapter, pos: Int) {

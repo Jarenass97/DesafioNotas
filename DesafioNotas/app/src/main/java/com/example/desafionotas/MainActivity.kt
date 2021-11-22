@@ -76,7 +76,7 @@ class MainActivity : AppCompatActivity() {
             .setPositiveButton("OK") { view, _ ->
                 asunto = txtAsunto.text.toString().trim()
                 asunto = if (asunto.isNotEmpty()) asunto
-                else "Sin asunto"
+                else getString(R.string.strSinAsunto)
                 crearNota(tipoNota, asunto)
                 view.dismiss()
             }
@@ -117,11 +117,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun abrirDetalle(nota: Nota) {
-        //borrar if (para que no se abran las de tipo tarea porque da error)
-        if (nota.tipo == TipoNota.TEXTO) {
-            val intent = Intent(this, DetalleNotasActivity::class.java)
-            intent.putExtra("nota", nota)
-            startActivity(intent)
-        }
+        val intent = Intent(this, DetalleNotasActivity::class.java)
+        intent.putExtra("nota", nota)
+        startActivity(intent)
     }
 }

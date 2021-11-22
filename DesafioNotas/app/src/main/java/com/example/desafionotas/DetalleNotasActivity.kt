@@ -10,7 +10,6 @@ import android.os.Bundle
 import android.provider.ContactsContract
 import android.telephony.SmsManager
 import android.text.TextUtils
-import android.util.Log
 import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AlertDialog
@@ -50,8 +49,10 @@ class DetalleNotasActivity : AppCompatActivity() {
         txtFechaHora = findViewById(R.id.txtFechaHoraDetalle)
         edTexto = findViewById(R.id.edTextoDetalle)
         animator = findViewById(R.id.vaTiposNota)
-        rvTareas = findViewById(R.id.rvTareas)
         btnCompartir = findViewById(R.id.btnCompartirNota)
+        rvTareas = findViewById(R.id.rvTareas)
+        rvTareas.setHasFixedSize(true)
+        rvTareas.layoutManager = LinearLayoutManager(this)
         cargarDatos()
     }
 
@@ -84,10 +85,7 @@ class DetalleNotasActivity : AppCompatActivity() {
             TipoNota.LISTA_TAREAS -> {
                 animator.showNext()
                 btnCompartir.isVisible = false
-                listaTareas = (nota as NotaTareas).tareas
-                for (t in listaTareas) {
-                    Log.e("jorge", t.tarea)
-                }
+                listaTareas = Conexion.getTareas(this, nota.id)
                 newTareasAdapter(TareasAdapter(this, listaTareas))
             }
         }
@@ -104,11 +102,10 @@ class DetalleNotasActivity : AppCompatActivity() {
     }
 
     private fun guardar() {
+        Conexion.modAsuntoNota(this, nota, edAsunto.text.toString().trim())
         when (nota.tipo) {
-            TipoNota.TEXTO -> {
-                Conexion.modAsuntoNota(this, nota, edAsunto.text.toString().trim())
-                Conexion.modTextoNota(this, nota, edTexto.text.toString().trim())
-            }
+            TipoNota.TEXTO -> Conexion.modTextoNota(this, nota, edTexto.text.toString().trim())
+            TipoNota.LISTA_TAREAS -> Conexion.guardarTareas(this, nota, adaptadorTareas.tareas)
         }
         Toast.makeText(this, "Guardado", Toast.LENGTH_SHORT).show()
     }
@@ -168,7 +165,7 @@ class DetalleNotasActivity : AppCompatActivity() {
             val permissionCheck =
                 ContextCompat.checkSelfPermission(this, Manifest.permission.SEND_SMS)
             if (permissionCheck == PackageManager.PERMISSION_GRANTED) {
-                miMensaje(contacto)
+                sendSMS(contacto)
             } else {
                 ActivityCompat.requestPermissions(
                     this,
@@ -176,7 +173,7 @@ class DetalleNotasActivity : AppCompatActivity() {
                     101
                 )
             }
-        } else Toast.makeText(this, "Nada", Toast.LENGTH_SHORT).show()
+        }
     }
 
     override fun onRequestPermissionsResult(
@@ -187,7 +184,7 @@ class DetalleNotasActivity : AppCompatActivity() {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == 101) {
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                miMensaje(adaptadorContactos.getSelected())
+                sendSMS(adaptadorContactos.getSelected())
             } else {
                 Toast.makeText(
                     this, "No tienes los permisos requeridos...",
@@ -197,7 +194,7 @@ class DetalleNotasActivity : AppCompatActivity() {
         }
     }
 
-    private fun miMensaje(contacto: Contacto) {
+    private fun sendSMS(contacto: Contacto) {
         var myNumber: String = contacto.numero
         myNumber = myNumber.replace(" ", "")
         myNumber = myNumber.replace("+34", "")
@@ -253,12 +250,12 @@ class DetalleNotasActivity : AppCompatActivity() {
             .setPositiveButton("OK") { dialog, _ ->
                 tarea = txtTarea.text.toString().trim()
                 tarea = if (tarea.isNotEmpty()) tarea
-                else "Indefinida"
+                else getString(R.string.strIndefinida)
                 listaTareas.add(Tarea(Auxiliar.getNextIDTarea(), tarea))
                 newTareasAdapter(TareasAdapter(this, listaTareas))
                 dialog.dismiss()
             }
-            .setCancelable(false)
+            .setCancelable(true)
             .create()
             .show()
     }
@@ -360,5 +357,10 @@ class DetalleNotasActivity : AppCompatActivity() {
 
     private fun difyears(yearMod: String, yearAct: String): Int {
         return yearAct.toInt() - yearMod.toInt()
+    }
+
+    fun delTarea(tarea: Tarea) {
+        listaTareas.remove(tarea)
+        newTareasAdapter(TareasAdapter(this, listaTareas))
     }
 }

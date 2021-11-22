@@ -23,4 +23,6 @@
     <string name="strTituloGuardar">Guardar cambios</string>
     <string name="strMensajeGuardar">¿Desea guardar los cambios?</string>
     <string name="strContactoNoSeleccionado">No has seleccionado ningún contacto</string>
+    <string name="strSinAsunto">Sin asunto</string>
+    <string name="strIndefinida">Indefinida</string>
 </resources>

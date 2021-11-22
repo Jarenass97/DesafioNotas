@@ -3,6 +3,7 @@ package connection
 import android.content.ContentValues
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
+import android.util.Log
 import androidx.core.database.getStringOrNull
 import assistant.Auxiliar
 import assistant.TipoNota
@@ -24,10 +25,11 @@ object Conexion {
         reg.put(Auxiliar.ASUNTO__NOTAS, nota.asunto)
         reg.put(Auxiliar.TIPO__NOTAS, if (nota.tipo == TipoNota.TEXTO) 0 else 1)
         bd.insert(Auxiliar.TABLA__NOTAS, null, reg)
-        addTexto(bd,nota.id)
+        addTexto(bd, nota.id)
         bd.close()
     }
-    private fun addTexto(bd:SQLiteDatabase, idNota: Int) {
+
+    private fun addTexto(bd: SQLiteDatabase, idNota: Int) {
         val reg = ContentValues()
         reg.put(Auxiliar.ID__NOTAS_TEXTO, idNota)
         reg.put(Auxiliar.TEXTO__NOTAS_TEXTO, "")
@@ -90,8 +92,7 @@ object Conexion {
                             id,
                             reg.getString(1),
                             reg.getString(2),
-                            reg.getString(3),
-                            getTareas(bd, id)
+                            reg.getString(3)
                         )
                     )
             }
@@ -110,10 +111,12 @@ object Conexion {
         else ""
     }
 
-    private fun getTareas(bd: SQLiteDatabase, idNota: Int): ArrayList<Tarea> {
+    fun getTareas(context: Context, idNota: Int): ArrayList<Tarea> {
         val tareas = ArrayList<Tarea>(0)
+        val admin = AdminSQLiteConnection(context, nombreBD, null, 1)
+        val bd = admin.writableDatabase
         val reg = bd.rawQuery(
-            "select ${Auxiliar.ID__TAREAS} ${Auxiliar.TAREA__TAREAS}, ${Auxiliar.REALIZADA__TAREAS}, ${Auxiliar.IMAGEN__TAREAS} from ${Auxiliar.TABLA__TAREAS} where ${Auxiliar.ID_NOTA__TAREAS}=$idNota",
+            "select ${Auxiliar.ID__TAREAS}, ${Auxiliar.TAREA__TAREAS}, ${Auxiliar.REALIZADA__TAREAS}, ${Auxiliar.IMAGEN__TAREAS} from ${Auxiliar.TABLA__TAREAS} where ${Auxiliar.ID_NOTA__TAREAS}=$idNota",
             null
         )
         while (reg.moveToNext()) {
@@ -126,6 +129,7 @@ object Conexion {
                 )
             )
         }
+        bd.close()
         return tareas
     }
 
@@ -218,5 +222,31 @@ object Conexion {
             )
         bd.close()
         return cantidad
+    }
+
+    fun guardarTareas(context: Context, nota: Nota, listaTareas: ArrayList<Tarea>) {
+        val admin = AdminSQLiteConnection(context, nombreBD, null, 1)
+        val bd = admin.writableDatabase
+        for (t in listaTareas) {
+            val reg = bd.rawQuery(
+                "select * from ${Auxiliar.TABLA__TAREAS} where ${Auxiliar.ID__TAREAS} like ${t.id}",
+                null
+            )
+            val tarea = ContentValues()
+            if (reg.moveToNext()) {
+                tarea.put(Auxiliar.TAREA__TAREAS, t.tarea)
+                tarea.put(Auxiliar.REALIZADA__TAREAS, if (t.realizada) 1 else 0)
+                tarea.put(Auxiliar.IMAGEN__TAREAS, t.img)
+                bd.update(Auxiliar.TABLA__TAREAS, tarea, "${Auxiliar.ID__TAREAS}=${t.id}", null)
+            } else {
+                tarea.put(Auxiliar.ID__TAREAS, t.id)
+                tarea.put(Auxiliar.ID_NOTA__TAREAS, nota.id)
+                tarea.put(Auxiliar.TAREA__TAREAS, t.tarea)
+                tarea.put(Auxiliar.REALIZADA__TAREAS, if (t.realizada) 1 else 0)
+                tarea.put(Auxiliar.IMAGEN__TAREAS, t.img)
+                bd.insert(Auxiliar.TABLA__TAREAS, null, tarea)
+            }
+        }
+        bd.close()
     }
 }
