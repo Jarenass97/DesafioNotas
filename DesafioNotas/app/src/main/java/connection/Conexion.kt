@@ -3,7 +3,6 @@ package connection
 import android.content.ContentValues
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
-import androidx.core.database.getStringOrNull
 import assistant.Auxiliar
 import assistant.TipoNota
 import model.Nota
@@ -106,14 +105,14 @@ object Conexion {
             null
         )
         while (reg.moveToNext()) {
-            tareas.add(
-                Tarea(
-                    reg.getInt(0),
-                    reg.getString(1),
-                    reg.getInt(2) == 1
-                    //,reg.getStringOrNull(3)
-                )
+            val imgBytes = reg.getBlob(3)
+            val tarea = Tarea(
+                reg.getInt(0),
+                reg.getString(1),
+                reg.getInt(2) == 1
             )
+            if (imgBytes != null) tarea.img = Auxiliar.getImage(imgBytes)
+            tareas.add(tarea)
         }
         bd.close()
         return tareas
@@ -215,14 +214,14 @@ object Conexion {
             if (reg.moveToNext()) {
                 tarea.put(Auxiliar.TAREA__TAREAS, t.tarea)
                 tarea.put(Auxiliar.REALIZADA__TAREAS, if (t.realizada) 1 else 0)
-                tarea.put(Auxiliar.IMAGEN__TAREAS, t.img.toString())
+                if (t.img != null) tarea.put(Auxiliar.IMAGEN__TAREAS, Auxiliar.getBytes(t.img!!))
                 bd.update(Auxiliar.TABLA__TAREAS, tarea, "${Auxiliar.ID__TAREAS}=${t.id}", null)
             } else {
                 tarea.put(Auxiliar.ID__TAREAS, t.id)
                 tarea.put(Auxiliar.ID_NOTA__TAREAS, nota.id)
                 tarea.put(Auxiliar.TAREA__TAREAS, t.tarea)
                 tarea.put(Auxiliar.REALIZADA__TAREAS, if (t.realizada) 1 else 0)
-                tarea.put(Auxiliar.IMAGEN__TAREAS, t.img.toString())
+                if (t.img != null) tarea.put(Auxiliar.IMAGEN__TAREAS, Auxiliar.getBytes(t.img!!))
                 bd.insert(Auxiliar.TABLA__TAREAS, null, tarea)
             }
         }

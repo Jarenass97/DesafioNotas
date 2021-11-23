@@ -2,6 +2,13 @@ package assistant
 
 import java.text.SimpleDateFormat
 import java.util.*
+import android.graphics.BitmapFactory
+
+import android.graphics.Bitmap
+
+import android.graphics.Bitmap.CompressFormat
+import java.io.ByteArrayOutputStream
+
 
 object Auxiliar {
     val FORMATO_FECHA = "dd/MM/yyyy"
@@ -47,5 +54,16 @@ object Auxiliar {
 
     fun getNextIDTarea(): Int {
         return nextIdTarea++
+    }
+
+    fun getBytes(bitmap: Bitmap): ByteArray? {
+        val stream = ByteArrayOutputStream()
+        bitmap.compress(CompressFormat.PNG, 0, stream)
+        return stream.toByteArray()
+    }
+
+    // convert from byte array to bitmap
+    fun getImage(image: ByteArray): Bitmap? {
+        return BitmapFactory.decodeByteArray(image, 0, image.size)
     }
 }

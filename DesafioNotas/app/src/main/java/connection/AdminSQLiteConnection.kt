@@ -41,7 +41,7 @@ class AdminSQLiteConnection(
                 "${Auxiliar.ID_NOTA__TAREAS} int," +
                 "${Auxiliar.TAREA__TAREAS} text," +
                 "${Auxiliar.REALIZADA__TAREAS} bit," +
-                "${Auxiliar.IMAGEN__TAREAS} text," +
+                "${Auxiliar.IMAGEN__TAREAS} blob," +
                 "CONSTRAINT FK_NOTA FOREIGN KEY (${Auxiliar.ID_NOTA__TAREAS}) " +
                 "REFERENCES ${Auxiliar.TABLA__NOTAS} (${Auxiliar.ID__NOTAS}) ON DELETE CASCADE)"
     }
