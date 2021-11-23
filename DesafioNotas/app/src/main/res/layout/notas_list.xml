@@ -11,33 +11,33 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <TextView
-            android:id="@+id/txtAsuntoNotaRecycler"
-            style="@style/txtAsuntos"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+        <ImageView
+            android:id="@+id/imgIconTipo"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
             android:layout_marginStart="20dp"
             android:layout_marginTop="20dp"
             android:layout_marginBottom="20dp"
-            android:paddingLeft="20dp"
-            android:text="TextView"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.0" />
+            app:layout_constraintVertical_bias="0.0"
+            app:srcCompat="@drawable/text_icon" />
 
         <TextView
-            android:id="@+id/txtTipoNota"
-            style="@style/txtHoras"
+            android:id="@+id/txtAsuntoNotaRecycler"
+            style="@style/txtAsuntos"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
             android:text="TextView"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/txtHoraRecycler"
-            app:layout_constraintStart_toEndOf="@+id/txtAsuntoNotaRecycler"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintBottom_toBottomOf="@+id/imgIconTipo"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.012"
+            app:layout_constraintStart_toEndOf="@+id/imgIconTipo"
+            app:layout_constraintTop_toTopOf="@+id/imgIconTipo" />
 
         <TextView
             android:id="@+id/txtHoraRecycler"
@@ -49,12 +49,11 @@
             android:gravity="right"
             android:paddingRight="20dp"
             android:text="TextView"
-            app:layout_constraintBottom_toBottomOf="@+id/txtAsuntoNotaRecycler"
+            app:layout_constraintBottom_toBottomOf="@+id/imgIconTipo"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintStart_toEndOf="@+id/txtAsuntoNotaRecycler"
-            app:layout_constraintTop_toTopOf="@+id/txtAsuntoNotaRecycler"
-            app:layout_constraintVertical_bias="0.6" />
+            app:layout_constraintTop_toTopOf="@+id/imgIconTipo" />
 
         <View
             android:id="@+id/divider"

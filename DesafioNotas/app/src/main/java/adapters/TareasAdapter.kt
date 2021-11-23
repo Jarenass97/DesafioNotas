@@ -126,7 +126,6 @@ class TareasAdapter(
                     arrayOf(Manifest.permission.CAMERA),
                     cameraRequest
                 )
-            Log.e("jorge", "haciendo afoto")
             val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
             ventana.startActivityForResult(intent, cameraRequest)
         }

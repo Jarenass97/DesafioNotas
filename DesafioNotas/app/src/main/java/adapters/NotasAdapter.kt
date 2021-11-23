@@ -3,6 +3,7 @@ package adapters
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
@@ -57,14 +58,16 @@ class NotasAdapter(
 
     class ViewHolder(view: View, ventana: AppCompatActivity) : RecyclerView.ViewHolder(view) {
         val asunto = view.findViewById<TextView>(R.id.txtAsuntoNotaRecycler)
-        val tipo = view.findViewById<TextView>(R.id.txtTipoNota)
+        val tipo = view.findViewById<ImageView>(R.id.imgIconTipo)
         val hora = view.findViewById<TextView>(R.id.txtHoraRecycler)
         val item = view.findViewById<ConstraintLayout>(R.id.lyNota)
         val btnEditar = ventana.findViewById<FloatingActionButton>(R.id.btnEditarNota)
 
         fun bind(nota: Nota, context: AppCompatActivity, pos: Int, notasAdapter: NotasAdapter) {
             asunto.text = nota.asunto
-            if (nota is NotaTexto) tipo.text = "Texto" else tipo.text = "Lista tareas"
+            if (nota is NotaTexto) tipo.setImageResource(R.drawable.text_icon) else tipo.setImageResource(
+                R.drawable.lista_icon
+            )
             hora.text = nota.hora
             if (pos == seleccionado) {
                 with(item) { setBackgroundResource(R.color.FondoNotaSeleccionada) }

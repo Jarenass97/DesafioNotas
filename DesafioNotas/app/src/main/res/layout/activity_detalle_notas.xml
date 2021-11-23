@@ -25,7 +25,8 @@
             android:layout_marginStart="20dp"
             android:ems="10"
             android:hint="@string/strTituloAsunto"
-            android:inputType="textPersonName" />
+            android:inputType="textPersonName"
+            android:maxLength="26" />
 
         <ImageButton
             android:id="@+id/btnCompartirNota"

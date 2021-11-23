@@ -16,7 +16,7 @@
         android:ems="10"
         android:hint="@string/strTituloAsunto"
         android:inputType="textPersonName"
-        android:maxLength="32"
+        android:maxLength="26"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
