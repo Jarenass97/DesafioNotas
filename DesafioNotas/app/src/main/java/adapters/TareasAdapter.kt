@@ -30,16 +30,15 @@ import model.Tarea
 
 class TareasAdapter(
     var context: DetalleNotasActivity,
-    var tareas: ArrayList<Tarea>
+    var tareas: ArrayList<Tarea>,
+    var eliminables: ArrayList<Tarea> = ArrayList<Tarea>(0)
 ) :
     RecyclerView.Adapter<TareasAdapter.ViewHolder>() {
 
-    var eliminables = ArrayList<Tarea>(0)
     var tareaChanged: Tarea? = null
 
     companion object {
         var seleccionado: Int = -1
-        var haciendoFoto: Boolean = false
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -74,6 +73,7 @@ class TareasAdapter(
             descTarea.text = tarea.tarea
             checked.isVisible = tarea.realizada
             if (tarea.img != null) imagen.setImageBitmap(tarea.img)
+            else imagen.setImageResource(R.drawable.tarea_default)
             if (tarea.realizada) descTarea.apply {
                 paintFlags = Paint.STRIKE_THRU_TEXT_FLAG
                 setTextAppearance(R.style.txtTareaRealizada)
@@ -136,10 +136,5 @@ class TareasAdapter(
             tareasAdapter.notifyDataSetChanged()
         }
 
-    }
-
-    private fun replace(tarea: Tarea, newTarea: Tarea) {
-        tareas.remove(tarea)
-        tareas.add(newTarea)
     }
 }

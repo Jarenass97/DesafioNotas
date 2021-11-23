@@ -76,7 +76,7 @@ class DetalleNotasActivity : AppCompatActivity() {
                 super.onBackPressed()
                 view.dismiss()
             }
-            .setCancelable(false)
+            .setCancelable(true)
             .create()
             .show()
     }
@@ -98,7 +98,7 @@ class DetalleNotasActivity : AppCompatActivity() {
         }
     }
 
-    private fun newTareasAdapter(adaptador: TareasAdapter) {
+    fun newTareasAdapter(adaptador: TareasAdapter) {
         adaptadorTareas = adaptador
         rvTareas.adapter = adaptadorTareas
     }
@@ -264,7 +264,7 @@ class DetalleNotasActivity : AppCompatActivity() {
                 tarea = if (tarea.isNotEmpty()) tarea
                 else getString(R.string.strIndefinida)
                 listaTareas.add(Tarea(Auxiliar.getNextIDTarea(), tarea))
-                newTareasAdapter(TareasAdapter(this, listaTareas))
+                newTareasAdapter(TareasAdapter(this, listaTareas, adaptadorTareas.eliminables))
                 dialog.dismiss()
             }
             .setCancelable(true)
@@ -373,14 +373,16 @@ class DetalleNotasActivity : AppCompatActivity() {
 
     public override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == cameraRequest && resultCode==Activity.RESULT_OK) {
-            var photo = data?.extras?.get("data") as Bitmap
-            val tareas = adaptadorTareas.tareas
-            val tareaChanged = adaptadorTareas.tareaChanged!!
-            val newTarea = tareaChanged
-            newTarea.img = photo
-            tareas[tareas.indexOf(tareaChanged)] = newTarea
-            newTareasAdapter(TareasAdapter(this, tareas))
+        if (requestCode == cameraRequest && resultCode == Activity.RESULT_OK) {
+            if (adaptadorTareas.tareaChanged != null) {
+                var photo = data?.extras?.get("data") as Bitmap
+                val tareas = adaptadorTareas.tareas
+                val tareaChanged = adaptadorTareas.tareaChanged!!
+                val newTarea = tareaChanged
+                newTarea.img = photo
+                tareas[tareas.indexOf(tareaChanged)] = newTarea
+                newTareasAdapter(TareasAdapter(this, tareas, adaptadorTareas.eliminables))
+            }
         }
     }
 }
