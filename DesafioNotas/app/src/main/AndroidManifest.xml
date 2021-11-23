@@ -13,9 +13,6 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.DesafioNotas">
         <activity
-            android:name=".ListadoContactosActivity"
-            android:exported="false" />
-        <activity
             android:name=".DetalleNotasActivity"
             android:exported="false" />
         <activity

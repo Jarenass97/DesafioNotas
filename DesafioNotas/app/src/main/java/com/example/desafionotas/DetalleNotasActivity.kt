@@ -3,15 +3,21 @@ package com.example.desafionotas
 import adapters.ContactosAdapter
 import adapters.TareasAdapter
 import android.Manifest
+import android.app.Activity
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.database.Cursor
+import android.graphics.Bitmap
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.ContactsContract
+import android.provider.MediaStore
 import android.telephony.SmsManager
 import android.text.TextUtils
+import android.util.Log
 import android.view.View
 import android.widget.*
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -36,6 +42,7 @@ class DetalleNotasActivity : AppCompatActivity() {
     lateinit var adaptadorContactos: ContactosAdapter
     lateinit var rvContactos: RecyclerView
     lateinit var btnCompartir: ImageButton
+    private val cameraRequest = 1888
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -105,7 +112,12 @@ class DetalleNotasActivity : AppCompatActivity() {
         Conexion.modAsuntoNota(this, nota, edAsunto.text.toString().trim())
         when (nota.tipo) {
             TipoNota.TEXTO -> Conexion.modTextoNota(this, nota, edTexto.text.toString().trim())
-            TipoNota.LISTA_TAREAS -> Conexion.guardarTareas(this, nota, adaptadorTareas.tareas)
+            TipoNota.LISTA_TAREAS -> Conexion.guardarTareas(
+                this,
+                nota,
+                adaptadorTareas.tareas,
+                adaptadorTareas.eliminables
+            )
         }
         Toast.makeText(this, "Guardado", Toast.LENGTH_SHORT).show()
     }
@@ -243,7 +255,7 @@ class DetalleNotasActivity : AppCompatActivity() {
     fun addTarea(view: View) {
         var tarea = ""
         val dialogView = layoutInflater.inflate(R.layout.tarea_creater, null)
-        val txtTarea = dialogView.findViewById<EditText>(R.id.edTarea)
+        val txtTarea = dialogView.findViewById<TextView>(R.id.edTarea)
         AlertDialog.Builder(this)
             .setTitle(getString(R.string.strTituloAsunto))
             .setView(dialogView)
@@ -359,8 +371,16 @@ class DetalleNotasActivity : AppCompatActivity() {
         return yearAct.toInt() - yearMod.toInt()
     }
 
-    fun delTarea(tarea: Tarea) {
-        listaTareas.remove(tarea)
-        newTareasAdapter(TareasAdapter(this, listaTareas))
+    public override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == cameraRequest && resultCode==Activity.RESULT_OK) {
+            var photo = data?.extras?.get("data") as Bitmap
+            val tareas = adaptadorTareas.tareas
+            val tareaChanged = adaptadorTareas.tareaChanged!!
+            val newTarea = tareaChanged
+            newTarea.img = photo
+            tareas[tareas.indexOf(tareaChanged)] = newTarea
+            newTareasAdapter(TareasAdapter(this, tareas))
+        }
     }
 }

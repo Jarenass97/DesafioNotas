@@ -36,4 +36,13 @@
         <item name="android:scaleType">fitCenter</item>
         <item name="android:background">@android:color/transparent</item>
     </style>
+
+    <style name="txtTareaNoRealizada" parent="Theme.DesafioNotas">
+        <item name="android:textColor">@color/black</item>
+        <item name="android:textStyle">normal</item>
+    </style>
+
+    <style name="txtTareaRealizada" parent="Theme.DesafioNotas">
+        <item name="android:textColor">@android:color/darker_gray</item>
+    </style>
 </resources>

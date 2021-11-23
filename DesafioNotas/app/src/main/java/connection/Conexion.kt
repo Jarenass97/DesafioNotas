@@ -3,7 +3,6 @@ package connection
 import android.content.ContentValues
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
-import android.util.Log
 import androidx.core.database.getStringOrNull
 import assistant.Auxiliar
 import assistant.TipoNota
@@ -34,19 +33,6 @@ object Conexion {
         reg.put(Auxiliar.ID__NOTAS_TEXTO, idNota)
         reg.put(Auxiliar.TEXTO__NOTAS_TEXTO, "")
         bd.insert(Auxiliar.TABLA__NOTAS_TEXTO, null, reg)
-    }
-
-    fun addTarea(context: Context, idNota: Int, tarea: Tarea) {
-        val admin = AdminSQLiteConnection(context, nombreBD, null, 1)
-        val bd = admin.writableDatabase
-        val reg = ContentValues()
-        reg.put(Auxiliar.ID__TAREAS, tarea.id)
-        reg.put(Auxiliar.ID_NOTA__TAREAS, idNota)
-        reg.put(Auxiliar.TAREA__TAREAS, tarea.tarea)
-        reg.put(Auxiliar.REALIZADA__TAREAS, if (tarea.realizada) 1 else 0)
-        reg.put(Auxiliar.IMAGEN__TAREAS, tarea.img)
-        bd.insert(Auxiliar.TABLA__TAREAS, null, reg)
-        bd.close()
     }
 
     fun numNotas(context: Context): Int {
@@ -124,8 +110,8 @@ object Conexion {
                 Tarea(
                     reg.getInt(0),
                     reg.getString(1),
-                    reg.getInt(2) == 1,
-                    reg.getStringOrNull(3)
+                    reg.getInt(2) == 1
+                    //,reg.getStringOrNull(3)
                 )
             )
         }
@@ -211,20 +197,13 @@ object Conexion {
         return nextID
     }
 
-    fun delTarea(context: Context, tarea: Tarea): Int {
-        val admin = AdminSQLiteConnection(context, nombreBD, null, 1)
-        val bd = admin.writableDatabase
-        val cantidad =
-            bd.delete(
-                Auxiliar.TABLA__TAREAS,
-                "${Auxiliar.ID__TAREAS}=${tarea.id}",
-                null
-            )
-        bd.close()
-        return cantidad
-    }
 
-    fun guardarTareas(context: Context, nota: Nota, listaTareas: ArrayList<Tarea>) {
+    fun guardarTareas(
+        context: Context,
+        nota: Nota,
+        listaTareas: ArrayList<Tarea>,
+        eliminables: ArrayList<Tarea>
+    ) {
         val admin = AdminSQLiteConnection(context, nombreBD, null, 1)
         val bd = admin.writableDatabase
         for (t in listaTareas) {
@@ -236,16 +215,23 @@ object Conexion {
             if (reg.moveToNext()) {
                 tarea.put(Auxiliar.TAREA__TAREAS, t.tarea)
                 tarea.put(Auxiliar.REALIZADA__TAREAS, if (t.realizada) 1 else 0)
-                tarea.put(Auxiliar.IMAGEN__TAREAS, t.img)
+                tarea.put(Auxiliar.IMAGEN__TAREAS, t.img.toString())
                 bd.update(Auxiliar.TABLA__TAREAS, tarea, "${Auxiliar.ID__TAREAS}=${t.id}", null)
             } else {
                 tarea.put(Auxiliar.ID__TAREAS, t.id)
                 tarea.put(Auxiliar.ID_NOTA__TAREAS, nota.id)
                 tarea.put(Auxiliar.TAREA__TAREAS, t.tarea)
                 tarea.put(Auxiliar.REALIZADA__TAREAS, if (t.realizada) 1 else 0)
-                tarea.put(Auxiliar.IMAGEN__TAREAS, t.img)
+                tarea.put(Auxiliar.IMAGEN__TAREAS, t.img.toString())
                 bd.insert(Auxiliar.TABLA__TAREAS, null, tarea)
             }
+        }
+        for (t in eliminables) {
+            bd.delete(
+                Auxiliar.TABLA__TAREAS,
+                "${Auxiliar.ID__TAREAS}=${t.id}",
+                null
+            )
         }
         bd.close()
     }
