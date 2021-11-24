@@ -9,4 +9,6 @@
     <color name="white">#FFFFFFFF</color>
     <color name="FondoNotaSeleccionada">#983D00</color>
     <color name="FondoNota">#F8E77B</color>
+    <color name="gris_oscuro">#787878</color>
+    <color name="gris_claro">#E4E4E4</color>
 </resources>

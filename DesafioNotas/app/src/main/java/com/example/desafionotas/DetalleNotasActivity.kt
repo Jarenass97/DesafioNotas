@@ -143,7 +143,13 @@ class DetalleNotasActivity : AppCompatActivity() {
         rvContactos = dialogView.findViewById(R.id.rvContactos)
         rvContactos.setHasFixedSize(true)
         rvContactos.layoutManager = LinearLayoutManager(this)
-        newContactosAdapter(ContactosAdapter(this, contactos))
+        val listaContactos = contactos.sortedBy { it.nombre }
+        newContactosAdapter(
+            ContactosAdapter(
+                this,
+                listaContactos
+            )
+        )
         if (contactos.size > 0) {
             AlertDialog.Builder(this)
                 .setTitle(getString(R.string.strContactos))

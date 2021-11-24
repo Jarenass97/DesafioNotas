@@ -1,6 +1,7 @@
 package adapters
 
 import android.graphics.Color
+import android.icu.lang.UCharacter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,7 +14,7 @@ import model.Contacto
 
 class ContactosAdapter(
     var context: AppCompatActivity,
-    var contactos: ArrayList<Contacto>
+    var contactos: List<Contacto>
 ) :
     RecyclerView.Adapter<ContactosAdapter.ViewHolder>() {
 
@@ -42,19 +43,22 @@ class ContactosAdapter(
     fun isSelected(): Boolean = seleccionado != -1
 
     class ViewHolder(view: View, ventana: AppCompatActivity) : RecyclerView.ViewHolder(view) {
-        val nombre = view.findViewById<TextView>(R.id.txtContacto)
-        val item = view.findViewById<ConstraintLayout>(R.id.lyContacto)
+        val txtNombre = view.findViewById<TextView>(R.id.txtContacto)
+        val clItem = view.findViewById<ConstraintLayout>(R.id.lyContacto)
+        val txtInicial = view.findViewById<TextView>(R.id.txtInicialContacto)
+
         fun bind(
             contacto: Contacto,
             context: AppCompatActivity,
             pos: Int,
             contactosAdapter: ContactosAdapter
         ) {
-            nombre.text = contacto.nombre
+            txtNombre.text = contacto.nombre
+            txtInicial.text = contacto.nombre.trim()[0].toString().uppercase()
             if (pos == seleccionado) {
-                with(item) { setBackgroundResource(com.example.desafionotas.R.color.FondoNota) }
+                with(clItem) { setBackgroundResource(com.example.desafionotas.R.color.FondoNota) }
             } else {
-                with(item) { setBackgroundColor(Color.TRANSPARENT) }
+                with(clItem) { setBackgroundColor(Color.TRANSPARENT) }
             }
             itemView.setOnClickListener(View.OnClickListener {
                 marcarSeleccion(contactosAdapter, pos)

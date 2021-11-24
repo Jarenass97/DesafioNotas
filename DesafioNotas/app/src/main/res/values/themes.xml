@@ -45,4 +45,10 @@
     <style name="txtTareaRealizada" parent="Theme.DesafioNotas">
         <item name="android:textColor">@android:color/darker_gray</item>
     </style>
+
+    <style name="inicialContacto" parent="Theme.DesafioNotas">
+        <item name="android:background">@color/gris_claro</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textSize">18dp</item>
+    </style>
 </resources>
