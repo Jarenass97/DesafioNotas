@@ -25,4 +25,7 @@
     <string name="strContactoNoSeleccionado">No has seleccionado ningún contacto</string>
     <string name="strSinAsunto">Sin asunto</string>
     <string name="strIndefinida">Indefinida</string>
+    <string name="strTituloCompartir">Compartir</string>
+    <string name="strMensajeCompartir">¿Cómo quiere compartir el contenido?</string>
+    <string name="strWhatsappNoInstalado">Tu dispositivo no tiene whatsapp instalado</string>
 </resources>

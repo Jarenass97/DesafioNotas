@@ -4,6 +4,7 @@ import adapters.ContactosAdapter
 import adapters.TareasAdapter
 import android.Manifest
 import android.app.Activity
+import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.database.Cursor
@@ -11,13 +12,10 @@ import android.graphics.Bitmap
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.ContactsContract
-import android.provider.MediaStore
 import android.telephony.SmsManager
 import android.text.TextUtils
-import android.util.Log
 import android.view.View
 import android.widget.*
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -28,6 +26,7 @@ import assistant.Auxiliar
 import assistant.TipoNota
 import connection.Conexion
 import model.*
+
 
 class DetalleNotasActivity : AppCompatActivity() {
     lateinit var nota: Nota
@@ -124,6 +123,29 @@ class DetalleNotasActivity : AppCompatActivity() {
 
     fun compartir(view: View) {
         btnCompartir.isEnabled = false
+        guardar()
+        enviar()
+    }
+
+    private fun enviar() {
+        AlertDialog.Builder(this)
+            .setTitle(getString(R.string.strTituloCompartir))
+            .setMessage(getString(R.string.strMensajeCompartir))
+            .setPositiveButton("Whatsapp") { view, _ ->
+                enviarPorWhastsapp()
+                view.dismiss()
+            }
+            .setNegativeButton("SMS") { view, _ ->
+                enviarPorSMS()
+                view.dismiss()
+            }
+            .setCancelable(true)
+            .create()
+            .show()
+        btnCompartir.isEnabled = true
+    }
+
+    private fun enviarPorSMS() {
         var contactos: ArrayList<Contacto>
         if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.READ_CONTACTS)
             == PackageManager.PERMISSION_GRANTED
@@ -134,7 +156,23 @@ class DetalleNotasActivity : AppCompatActivity() {
             contactos = obtenerContactos()
         }
         openDialogContacts(contactos)
-        btnCompartir.isEnabled = true
+    }
+
+    private fun enviarPorWhastsapp() {
+        val intent = Intent(Intent.ACTION_SEND)
+        intent.type = "text/plain"
+        intent.setPackage("com.whatsapp")
+        intent.putExtra(
+            Intent.EXTRA_TEXT,
+            "*Asunto:* ${nota.asunto}\n*Contenido:*\n${(nota as NotaTexto).texto}"
+        )
+        try {
+            startActivity(intent)
+        } catch (ex: ActivityNotFoundException) {
+            ex.printStackTrace()
+            Toast.makeText(this, getString(R.string.strWhatsappNoInstalado), Toast.LENGTH_SHORT)
+                .show()
+        }
     }
 
     private fun openDialogContacts(contactos: ArrayList<Contacto>) {
@@ -202,7 +240,6 @@ class DetalleNotasActivity : AppCompatActivity() {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == 101) {
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                sendSMS(adaptadorContactos.getSelected())
             } else {
                 Toast.makeText(
                     this, "No tienes los permisos requeridos...",

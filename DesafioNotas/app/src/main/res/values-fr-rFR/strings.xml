@@ -25,4 +25,7 @@
     <string name="strContactoNoSeleccionado">" Vous n'avez sélectionné aucun contact"</string>
     <string name="strSinAsunto">" Pas de sujet"</string>
     <string name="strIndefinida">" Indéfinie"</string>
+    <string name="strTituloCompartir">Partager</string>
+    <string name="strMensajeCompartir">" Comment voulez-vous partager le contenu ?"</string>
+    <string name="strWhatsappNoInstalado">" WhatsApp n'est pas installé sur votre appareil"</string>
 </resources>
