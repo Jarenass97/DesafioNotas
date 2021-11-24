@@ -33,7 +33,7 @@
             style="@style/imgButton"
             android:layout_marginStart="20dp"
             android:onClick="compartir"
-            app:srcCompat="@drawable/ic_baseline_share_24" />
+            app:srcCompat="@drawable/share" />
 
         <ImageButton
             android:id="@+id/btnGuardarDetalle"
@@ -41,7 +41,7 @@
             android:layout_marginStart="20dp"
             android:onClick="btnGuardar"
             android:scaleType="fitCenter"
-            app:srcCompat="@drawable/ic_baseline_save_24" />
+            app:srcCompat="@drawable/save" />
     </LinearLayout>
 
     <LinearLayout
