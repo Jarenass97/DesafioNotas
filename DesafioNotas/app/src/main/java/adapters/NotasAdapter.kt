@@ -11,10 +11,12 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
+import assistant.TipoNota
 import com.example.desafionotas.R
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import connection.Conexion
 import model.Nota
+import model.NotaTareas
 import model.NotaTexto
 
 class NotasAdapter(
@@ -57,22 +59,29 @@ class NotasAdapter(
     }
 
     class ViewHolder(view: View, ventana: AppCompatActivity) : RecyclerView.ViewHolder(view) {
-        val asunto = view.findViewById<TextView>(R.id.txtAsuntoNotaRecycler)
-        val tipo = view.findViewById<ImageView>(R.id.imgIconTipo)
-        val hora = view.findViewById<TextView>(R.id.txtHoraRecycler)
-        val item = view.findViewById<ConstraintLayout>(R.id.lyNota)
+        val txtAsunto = view.findViewById<TextView>(R.id.txtAsuntoNotaRecycler)
+        val imgTipo = view.findViewById<ImageView>(R.id.imgIconTipo)
+        val txtHora = view.findViewById<TextView>(R.id.txtHoraRecycler)
+        val clItem = view.findViewById<ConstraintLayout>(R.id.lyNota)
+        val txtContenido = view.findViewById<TextView>(R.id.txtContenido)
         val btnEditar = ventana.findViewById<FloatingActionButton>(R.id.btnEditarNota)
 
         fun bind(nota: Nota, context: AppCompatActivity, pos: Int, notasAdapter: NotasAdapter) {
-            asunto.text = nota.asunto
-            if (nota is NotaTexto) tipo.setImageResource(R.drawable.text_icon) else tipo.setImageResource(
-                R.drawable.lista_icon
-            )
-            hora.text = nota.hora
-            if (pos == seleccionado) {
-                with(item) { setBackgroundResource(R.color.FondoNotaSeleccionada) }
+            txtAsunto.text = nota.asunto
+            if (nota.tipo == TipoNota.TEXTO) {
+                imgTipo.setImageResource(R.drawable.text_icon)
+                var cont = (nota as NotaTexto).texto
+                txtContenido.text = if (cont.length > 50) cont.substring(0, 50)
+                else cont
             } else {
-                with(item) { setBackgroundResource(R.color.FondoNota) }
+                imgTipo.setImageResource(R.drawable.lista_icon)
+                txtContenido.text = ""
+            }
+            txtHora.text = nota.hora
+            if (pos == seleccionado) {
+                with(clItem) { setBackgroundResource(R.color.FondoNotaSeleccionada) }
+            } else {
+                with(clItem) { setBackgroundResource(R.color.FondoNota) }
             }
             itemView.setOnClickListener(View.OnClickListener {
                 marcarSeleccion(notasAdapter, pos)
