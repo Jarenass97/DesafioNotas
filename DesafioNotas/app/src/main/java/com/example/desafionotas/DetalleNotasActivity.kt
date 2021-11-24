@@ -123,7 +123,7 @@ class DetalleNotasActivity : AppCompatActivity() {
 
     fun compartir(view: View) {
         btnCompartir.isEnabled = false
-        guardar()
+        (nota as NotaTexto).texto = edTexto.text.toString()
         enviar()
     }
 

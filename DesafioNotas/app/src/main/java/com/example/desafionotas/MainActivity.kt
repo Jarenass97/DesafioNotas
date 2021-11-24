@@ -36,7 +36,6 @@ class MainActivity : AppCompatActivity() {
 
         Auxiliar.nextIdNota = Conexion.getNextIdNota(this)
         Auxiliar.nextIdTarea = Conexion.getNextIdTarea(this)
-        Fichero.contexto = this
     }
 
     override fun onResume() {
