@@ -80,17 +80,12 @@
 
             <EditText
                 android:id="@+id/edTextoDetalle"
+                style="@style/textoNota.color"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:background="@drawable/plantilla"
-                android:backgroundTint="#8A8686"
                 android:ems="10"
-                android:gravity="start|top"
-                android:inputType="textMultiLine"
-                android:paddingLeft="20dp"
-                android:paddingRight="20dp"
-                android:textSize="24dp" />
+                android:inputType="textMultiLine" />
 
         </LinearLayout>
 

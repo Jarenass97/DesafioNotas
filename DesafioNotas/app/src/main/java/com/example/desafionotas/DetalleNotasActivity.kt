@@ -16,6 +16,7 @@ import android.os.Bundle
 import android.provider.ContactsContract
 import android.telephony.SmsManager
 import android.text.TextUtils
+import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import android.widget.*
@@ -283,7 +284,7 @@ class DetalleNotasActivity : AppCompatActivity() {
         var myNumber: String = contacto.numero
         myNumber = myNumber.replace(" ", "")
         myNumber = myNumber.replace("+34", "")
-        val myMsg = "${nota.asunto}:\n ${(nota as NotaTexto).texto}"
+        val myMsg = "${nota.asunto}:\n${(nota as NotaTexto).texto}"
         if (TextUtils.isDigitsOnly(myNumber)) {
             val smsManager: SmsManager = SmsManager.getDefault()
             smsManager.sendTextMessage(myNumber, null, myMsg, null, null)
