@@ -32,14 +32,12 @@
             android:id="@+id/btnCompartirNota"
             style="@style/imgButton"
             android:layout_marginStart="20dp"
-            android:onClick="compartir"
             app:srcCompat="@drawable/share" />
 
         <ImageButton
             android:id="@+id/btnGuardarDetalle"
             style="@style/imgButton"
             android:layout_marginStart="20dp"
-            android:onClick="btnGuardar"
             android:scaleType="fitCenter"
             app:srcCompat="@drawable/save" />
     </LinearLayout>

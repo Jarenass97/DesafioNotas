@@ -3,17 +3,20 @@ package com.example.desafionotas
 import adapters.ContactosAdapter
 import adapters.TareasAdapter
 import android.Manifest
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.database.Cursor
 import android.graphics.Bitmap
+import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.ContactsContract
 import android.telephony.SmsManager
 import android.text.TextUtils
+import android.view.MotionEvent
 import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AlertDialog
@@ -41,6 +44,7 @@ class DetalleNotasActivity : AppCompatActivity() {
     lateinit var adaptadorContactos: ContactosAdapter
     lateinit var rvContactos: RecyclerView
     lateinit var btnCompartir: ImageButton
+    lateinit var btnGuardar: ImageButton
     private val cameraRequest = 1888
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -56,6 +60,7 @@ class DetalleNotasActivity : AppCompatActivity() {
         edTexto = findViewById(R.id.edTextoDetalle)
         animator = findViewById(R.id.vaTiposNota)
         btnCompartir = findViewById(R.id.btnCompartirNota)
+        btnGuardar = findViewById(R.id.btnGuardarDetalle)
         rvTareas = findViewById(R.id.rvTareas)
         rvTareas.setHasFixedSize(true)
         rvTareas.layoutManager = LinearLayoutManager(this)
@@ -81,6 +86,7 @@ class DetalleNotasActivity : AppCompatActivity() {
     }
 
     private fun cargarDatos() {
+        asignarFuncionBotones()
         edAsunto.append(nota.asunto)
         txtLastMod.text = getUltimaModificacion()
         txtFechaHora.text = "${nota.fecha} - ${nota.hora}"
@@ -97,12 +103,36 @@ class DetalleNotasActivity : AppCompatActivity() {
         }
     }
 
+    @SuppressLint("ClickableViewAccessibility")
+    private fun asignarFuncionBotones() {
+        btnGuardar.setOnTouchListener(View.OnTouchListener { view, motionEvent ->
+            when (motionEvent.action) {
+                MotionEvent.ACTION_DOWN -> btnGuardar.setBackgroundResource(R.color.itemSelected)
+                MotionEvent.ACTION_UP -> {
+                    btnGuardar.setBackgroundColor(Color.TRANSPARENT)
+                    btnGuardar()
+                }
+            }
+            true
+        })
+        btnCompartir.setOnTouchListener(View.OnTouchListener { view, motionEvent ->
+            when (motionEvent.action) {
+                MotionEvent.ACTION_DOWN -> btnCompartir.setBackgroundResource(R.color.itemSelected)
+                MotionEvent.ACTION_UP -> {
+                    btnCompartir.setBackgroundColor(Color.TRANSPARENT)
+                    compartir()
+                }
+            }
+            true
+        })
+    }
+
     fun newTareasAdapter(adaptador: TareasAdapter) {
         adaptadorTareas = adaptador
         rvTareas.adapter = adaptadorTareas
     }
 
-    fun btnGuardar(view: View) {
+    fun btnGuardar() {
         guardar()
         finish()
     }
@@ -121,7 +151,7 @@ class DetalleNotasActivity : AppCompatActivity() {
         Toast.makeText(this, "Guardado", Toast.LENGTH_SHORT).show()
     }
 
-    fun compartir(view: View) {
+    fun compartir() {
         btnCompartir.isEnabled = false
         (nota as NotaTexto).texto = edTexto.text.toString()
         enviar()

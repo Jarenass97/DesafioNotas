@@ -1,15 +1,18 @@
 package adapters
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
+import android.graphics.Color
 import android.graphics.Paint
 import android.os.Build
 import android.provider.MediaStore
 import android.util.Log
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
@@ -82,9 +85,16 @@ class TareasAdapter(
                 paintFlags = Paint.ANTI_ALIAS_FLAG
                 setTextAppearance(R.style.txtTareaNoRealizada)
             }
-            imagen.setOnClickListener(View.OnClickListener {
-                tareasAdapter.tareaChanged = tarea
-                hacerFoto(tareasAdapter, tarea)
+            imagen.setOnTouchListener(View.OnTouchListener { view, motionEvent ->
+                when (motionEvent.action) {
+                    MotionEvent.ACTION_DOWN -> imagen.setBackgroundColor(Color.DKGRAY)
+                    MotionEvent.ACTION_UP -> {
+                        imagen.setBackgroundColor(Color.TRANSPARENT)
+                        tareasAdapter.tareaChanged = tarea
+                        hacerFoto(tareasAdapter, tarea)
+                    }
+                }
+                true
             })
             itemView.setOnClickListener(View.OnClickListener {
                 tarea.realizada = !tarea.realizada

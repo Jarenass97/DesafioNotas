@@ -23,7 +23,7 @@ object Conexion {
         reg.put(Auxiliar.ASUNTO__NOTAS, nota.asunto)
         reg.put(Auxiliar.TIPO__NOTAS, if (nota.tipo == TipoNota.TEXTO) 0 else 1)
         bd.insert(Auxiliar.TABLA__NOTAS, null, reg)
-        addTexto(bd, nota.id)
+        if (nota.tipo == TipoNota.TEXTO) addTexto(bd, nota.id)
         bd.close()
     }
 
