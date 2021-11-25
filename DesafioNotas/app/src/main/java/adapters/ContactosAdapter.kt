@@ -32,12 +32,12 @@ class ContactosAdapter(
         holder.bind(item, context, position, this)
     }
 
-    override fun getItemCount(): Int {
-        return contactos.size
-    }
+    override fun getItemCount(): Int = contactos.size
 
     fun getSelected(): Contacto {
-        return contactos.get(seleccionado)
+        val contacto = contactos.get(seleccionado)
+        seleccionado = -1
+        return contacto
     }
 
     fun isSelected(): Boolean = seleccionado != -1
@@ -66,11 +66,7 @@ class ContactosAdapter(
         }
 
         private fun marcarSeleccion(contactosAdapter: ContactosAdapter, pos: Int) {
-            seleccionado = if (pos == seleccionado) {
-                -1
-            } else {
-                pos
-            }
+            seleccionado = if (pos == seleccionado) -1 else pos
             contactosAdapter.notifyDataSetChanged()
         }
     }
