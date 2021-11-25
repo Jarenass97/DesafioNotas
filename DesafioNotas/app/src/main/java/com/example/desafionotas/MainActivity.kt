@@ -23,6 +23,7 @@ class MainActivity : AppCompatActivity() {
     lateinit var notasList: ArrayList<Nota>
     lateinit var btnEditar: FloatingActionButton
     override fun onCreate(savedInstanceState: Bundle?) {
+        setTheme(R.style.Theme_DesafioNotas)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
