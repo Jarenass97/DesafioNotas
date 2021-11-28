@@ -30,6 +30,9 @@ import assistant.Auxiliar
 import assistant.TipoNota
 import connection.Conexion
 import model.*
+import android.graphics.BitmapFactory
+import java.io.FileNotFoundException
+import java.io.InputStream
 
 
 class DetalleNotasActivity : AppCompatActivity() {
@@ -473,16 +476,44 @@ class DetalleNotasActivity : AppCompatActivity() {
 
     public override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == cameraRequest && resultCode == Activity.RESULT_OK) {
-            if (adaptadorTareas.tareaChanged != null) {
-                var photo = data?.extras?.get("data") as Bitmap
-                val tareas = adaptadorTareas.tareas
-                val tareaChanged = adaptadorTareas.tareaChanged!!
-                val newTarea = tareaChanged
-                newTarea.img = photo
-                tareas[tareas.indexOf(tareaChanged)] = newTarea
-                newTareasAdapter(TareasAdapter(this, tareas, adaptadorTareas.eliminables))
+        when (requestCode) {
+            cameraRequest -> {
+                if (resultCode == Activity.RESULT_OK) {
+                    if (adaptadorTareas.tareaChanged != null) {
+                        var photo = data?.extras?.get("data") as Bitmap
+                        cambiarImagen(photo)
+                    }
+                }
+            }
+            Auxiliar.CODE_GALLERY -> {
+                if (resultCode === Activity.RESULT_OK) {
+                    val selectedImage = data?.data
+                    val selectedPath: String? = selectedImage?.path
+                        if (selectedPath != null) {
+                            var imageStream: InputStream? = null
+                            try {
+                                imageStream = selectedImage.let {
+                                    contentResolver.openInputStream(
+                                        it
+                                    )
+                                }
+                            } catch (e: FileNotFoundException) {
+                                e.printStackTrace()
+                            }
+                            val bmp = BitmapFactory.decodeStream(imageStream)
+                            cambiarImagen(Bitmap.createScaledBitmap(bmp,200,300,true))
+                    }
+                }
             }
         }
+    }
+
+    private fun cambiarImagen(image: Bitmap) {
+        val tareas = adaptadorTareas.tareas
+        val tareaChanged = adaptadorTareas.tareaChanged!!
+        val newTarea = tareaChanged
+        newTarea.img = image
+        tareas[tareas.indexOf(tareaChanged)] = newTarea
+        newTareasAdapter(TareasAdapter(this, tareas, adaptadorTareas.eliminables))
     }
 }

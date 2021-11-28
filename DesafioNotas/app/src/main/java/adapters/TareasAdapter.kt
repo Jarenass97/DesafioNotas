@@ -30,6 +30,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.desafionotas.DetalleNotasActivity
 import com.example.desafionotas.R
 import model.Tarea
+import androidx.core.app.ActivityCompat.startActivityForResult
+import assistant.Auxiliar
+
 
 class TareasAdapter(
     var context: DetalleNotasActivity,
@@ -91,7 +94,7 @@ class TareasAdapter(
                     MotionEvent.ACTION_UP -> {
                         imagen.setBackgroundColor(Color.TRANSPARENT)
                         tareasAdapter.tareaChanged = tarea
-                        hacerFoto(tareasAdapter, tarea)
+                        CambiarFoto()
                     }
                 }
                 true
@@ -125,7 +128,34 @@ class TareasAdapter(
             })
         }
 
-        private fun hacerFoto(tareasAdapter: TareasAdapter, tarea: Tarea) {
+        private fun CambiarFoto() {
+            AlertDialog.Builder(ventana)
+                .setTitle(ventana.getString(R.string.strElegirFoto))
+                .setMessage(ventana.getString(R.string.strMensajeElegirFoto))
+                .setPositiveButton(ventana.getString(R.string.strCamara)) { view, _ ->
+                    hacerFoto()
+                    view.dismiss()
+                }
+                .setNegativeButton(ventana.getString(R.string.strGaleria)) { view, _ ->
+                    elegirDeGaleria()
+                    view.dismiss()
+                }
+                .setCancelable(true)
+                .create()
+                .show()
+        }
+
+        private fun elegirDeGaleria() {
+            val intent = Intent()
+            intent.type = "image/*"
+            intent.action = Intent.ACTION_GET_CONTENT
+            ventana.startActivityForResult(
+                Intent.createChooser(intent, "Seleccione una imagen"),
+                Auxiliar.CODE_GALLERY
+            )
+        }
+
+        private fun hacerFoto() {
             if (ContextCompat.checkSelfPermission(
                     ventana,
                     Manifest.permission.CAMERA

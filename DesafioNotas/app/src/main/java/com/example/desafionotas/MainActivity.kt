@@ -79,7 +79,7 @@ class MainActivity : AppCompatActivity() {
                 crearNota(tipoNota, asunto)
                 view.dismiss()
             }
-            .setCancelable(false)
+            .setCancelable(true)
             .create()
             .show()
     }

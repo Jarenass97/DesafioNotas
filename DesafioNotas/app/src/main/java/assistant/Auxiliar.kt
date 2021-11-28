@@ -13,6 +13,7 @@ import java.io.ByteArrayOutputStream
 object Auxiliar {
     val FORMATO_FECHA = "dd/MM/yyyy"
     val FORMATO_HORA = "hh:mm"
+    val CODE_GALLERY = 1
 
     fun fechaActual(): String {
         return SimpleDateFormat(FORMATO_FECHA).format(Date())

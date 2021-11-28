@@ -27,4 +27,8 @@
     <string name="strTituloCompartir">Share</string>
     <string name="strMensajeCompartir">How do you want to share the content?</string>
     <string name="strWhatsappNoInstalado">Your device doesn´t have whatsapp installed</string>
+    <string name="strElegirFoto">Choose photo</string>
+    <string name="strMensajeElegirFoto">How do you want to add the photo?</string>
+    <string name="strCamara">Camera</string>
+    <string name="strGaleria">Gallery</string>
 </resources>
