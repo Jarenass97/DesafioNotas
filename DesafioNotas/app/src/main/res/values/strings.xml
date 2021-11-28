@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Notes</string>
+    <string name="app_name">JarenasColorNote</string>
     <string name="strTituloTipo">Note type</string>
     <string name="strMensajeTipo">What kind of note do you want to create?</string>
     <string name="strTipoTexto">Text</string>

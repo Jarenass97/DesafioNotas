@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Notas</string>
+    <string name="app_name">JarenasColorNote</string>
     <string name="strTituloTipo">Tipo de nota</string>
     <string name="strMensajeTipo">¿Qué tipo de nota quiere crear?</string>
     <string name="strTipoTexto">Texto</string>

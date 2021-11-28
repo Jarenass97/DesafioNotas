@@ -3,13 +3,17 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/jorge/Desktop/Jorge Arenas/DAM2/PMDM/Android/Ejercicios/DesafioNotas/DesafioNotas/app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.21574074074074073" />
         <entry key="..\:/Users/jorge/Desktop/Jorge Arenas/DAM2/PMDM/Android/Ejercicios/DesafioNotas/DesafioNotas/app/src/main/res/drawable/ic_baseline_check_24.xml" value="0.2203125" />
         <entry key="..\:/Users/jorge/Desktop/Jorge Arenas/DAM2/PMDM/Android/Ejercicios/DesafioNotas/DesafioNotas/app/src/main/res/drawable/ic_baseline_save_24.xml" value="0.2203125" />
         <entry key="..\:/Users/jorge/Desktop/Jorge Arenas/DAM2/PMDM/Android/Ejercicios/DesafioNotas/DesafioNotas/app/src/main/res/drawable/ic_baseline_share_24.xml" value="0.2203125" />
+        <entry key="..\:/Users/jorge/Desktop/Jorge Arenas/DAM2/PMDM/Android/Ejercicios/DesafioNotas/DesafioNotas/app/src/main/res/drawable/share.xml" value="0.21574074074074073" />
         <entry key="..\:/Users/jorge/Desktop/Jorge Arenas/DAM2/PMDM/Android/Ejercicios/DesafioNotas/DesafioNotas/app/src/main/res/drawable/tarea_default.xml" value="0.2203125" />
+        <entry key="..\:/Users/jorge/Desktop/Jorge Arenas/DAM2/PMDM/Android/Ejercicios/DesafioNotas/DesafioNotas/app/src/main/res/drawable/text_icon.xml" value="0.21574074074074073" />
         <entry key="..\:/Users/jorge/Desktop/Jorge Arenas/DAM2/PMDM/Android/Ejercicios/DesafioNotas/DesafioNotas/app/src/main/res/layout/activity_detalle_notas.xml" value="0.22" />
         <entry key="..\:/Users/jorge/Desktop/Jorge Arenas/DAM2/PMDM/Android/Ejercicios/DesafioNotas/DesafioNotas/app/src/main/res/layout/activity_listado_contactos.xml" value="0.1" />
         <entry key="..\:/Users/jorge/Desktop/Jorge Arenas/DAM2/PMDM/Android/Ejercicios/DesafioNotas/DesafioNotas/app/src/main/res/layout/activity_main.xml" value="0.292259083728278" />
+        <entry key="..\:/Users/jorge/Desktop/Jorge Arenas/DAM2/PMDM/Android/Ejercicios/DesafioNotas/DesafioNotas/app/src/main/res/layout/activity_splash_screen.xml" value="0.1213768115942029" />
         <entry key="..\:/Users/jorge/Desktop/Jorge Arenas/DAM2/PMDM/Android/Ejercicios/DesafioNotas/DesafioNotas/app/src/main/res/layout/asunto_view.xml" value="0.22" />
         <entry key="..\:/Users/jorge/Desktop/Jorge Arenas/DAM2/PMDM/Android/Ejercicios/DesafioNotas/DesafioNotas/app/src/main/res/layout/contacto_item.xml" value="0.33" />
         <entry key="..\:/Users/jorge/Desktop/Jorge Arenas/DAM2/PMDM/Android/Ejercicios/DesafioNotas/DesafioNotas/app/src/main/res/layout/contactos_list.xml" value="0.1644021739130435" />
