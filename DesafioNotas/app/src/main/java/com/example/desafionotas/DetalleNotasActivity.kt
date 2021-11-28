@@ -97,7 +97,7 @@ class DetalleNotasActivity : AppCompatActivity() {
             }
             TipoNota.LISTA_TAREAS -> {
                 animator.showNext()
-                btnCompartir.isVisible = false
+                //btnCompartir.isVisible = false
                 listaTareas = Conexion.getTareas(this, nota.id)
                 newTareasAdapter(TareasAdapter(this, listaTareas))
             }
@@ -139,7 +139,9 @@ class DetalleNotasActivity : AppCompatActivity() {
     }
 
     private fun guardar() {
-        Conexion.modAsuntoNota(this, nota, edAsunto.text.toString().trim())
+        var newAsunto = edAsunto.text.toString().trim()
+        if (newAsunto.isEmpty()) newAsunto = getString(R.string.strSinAsunto)
+        Conexion.modAsuntoNota(this, nota, newAsunto)
         when (nota.tipo) {
             TipoNota.TEXTO -> Conexion.modTextoNota(this, nota, edTexto.text.toString().trim())
             TipoNota.LISTA_TAREAS -> Conexion.guardarTareas(
@@ -154,25 +156,33 @@ class DetalleNotasActivity : AppCompatActivity() {
 
     fun compartir() {
         btnCompartir.isEnabled = false
-        (nota as NotaTexto).texto = edTexto.text.toString()
         enviar()
     }
 
     private fun enviar() {
-        AlertDialog.Builder(this)
-            .setTitle(getString(R.string.strTituloCompartir))
-            .setMessage(getString(R.string.strMensajeCompartir))
-            .setPositiveButton("Whatsapp") { view, _ ->
+        when (nota.tipo) {
+            TipoNota.TEXTO -> {
+                (nota as NotaTexto).texto = edTexto.text.toString()
+                AlertDialog.Builder(this)
+                    .setTitle(getString(R.string.strTituloCompartir))
+                    .setMessage(getString(R.string.strMensajeCompartir))
+                    .setPositiveButton("Whatsapp") { view, _ ->
+                        enviarPorWhastsapp()
+                        view.dismiss()
+                    }
+                    .setNegativeButton("SMS") { view, _ ->
+                        enviarPorSMS()
+                        view.dismiss()
+                    }
+                    .setCancelable(true)
+                    .create()
+                    .show()
+            }
+            TipoNota.LISTA_TAREAS -> {
+                guardar()
                 enviarPorWhastsapp()
-                view.dismiss()
             }
-            .setNegativeButton("SMS") { view, _ ->
-                enviarPorSMS()
-                view.dismiss()
-            }
-            .setCancelable(true)
-            .create()
-            .show()
+        }
         btnCompartir.isEnabled = true
     }
 
@@ -193,10 +203,17 @@ class DetalleNotasActivity : AppCompatActivity() {
         val intent = Intent(Intent.ACTION_SEND)
         intent.type = "text/plain"
         intent.setPackage("com.whatsapp")
-        intent.putExtra(
-            Intent.EXTRA_TEXT,
-            "*Asunto:* ${nota.asunto}\n*Contenido:*\n${(nota as NotaTexto).texto}"
-        )
+        when (nota.tipo) {
+            TipoNota.TEXTO -> intent.putExtra(
+                Intent.EXTRA_TEXT,
+                "*Asunto:* ${nota.asunto}\n*Contenido:*\n${(nota as NotaTexto).texto}"
+            )
+            TipoNota.LISTA_TAREAS -> intent.putExtra(
+                Intent.EXTRA_TEXT,
+                "*Asunto:* ${nota.asunto}\n*Contenido:*\n${tareasToString()}"
+            )
+        }
+
         try {
             startActivity(intent)
         } catch (ex: ActivityNotFoundException) {
@@ -204,6 +221,15 @@ class DetalleNotasActivity : AppCompatActivity() {
             Toast.makeText(this, getString(R.string.strWhatsappNoInstalado), Toast.LENGTH_SHORT)
                 .show()
         }
+    }
+
+    private fun tareasToString(): String {
+        val tareas = Conexion.getTareas(this, nota.id)
+        var stringTareas = ""
+        for (t in tareas) {
+            stringTareas += "- $t\n"
+        }
+        return stringTareas
     }
 
     private fun openDialogContacts(contactos: ArrayList<Contacto>) {
