@@ -31,8 +31,10 @@ import assistant.TipoNota
 import connection.Conexion
 import model.*
 import android.graphics.BitmapFactory
+import androidx.activity.result.contract.ActivityResultContracts
 import java.io.FileNotFoundException
 import java.io.InputStream
+import java.text.Normalizer
 
 
 class DetalleNotasActivity : AppCompatActivity() {
@@ -49,7 +51,6 @@ class DetalleNotasActivity : AppCompatActivity() {
     lateinit var rvContactos: RecyclerView
     lateinit var btnCompartir: ImageButton
     lateinit var btnGuardar: ImageButton
-    private val cameraRequest = 1888
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -100,7 +101,6 @@ class DetalleNotasActivity : AppCompatActivity() {
             }
             TipoNota.LISTA_TAREAS -> {
                 animator.showNext()
-                //btnCompartir.isVisible = false
                 listaTareas = Conexion.getTareas(this, nota.id)
                 newTareasAdapter(TareasAdapter(this, listaTareas))
             }
@@ -160,6 +160,7 @@ class DetalleNotasActivity : AppCompatActivity() {
     fun compartir() {
         btnCompartir.isEnabled = false
         enviar()
+        btnCompartir.isEnabled = true
     }
 
     private fun enviar() {
@@ -186,21 +187,24 @@ class DetalleNotasActivity : AppCompatActivity() {
                 enviarPorWhastsapp()
             }
         }
-        btnCompartir.isEnabled = true
     }
 
     private fun enviarPorSMS() {
-        var contactos: ArrayList<Contacto>
-        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.READ_CONTACTS)
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_CONTACTS)
             == PackageManager.PERMISSION_GRANTED
         ) {
-            contactos = obtenerContactos()
+            openDialogContacts()
         } else {
-            requestPermission();
-            contactos = obtenerContactos()
+            readContacts_requestPermissionsLauncher.launch(Manifest.permission.READ_CONTACTS)
         }
-        openDialogContacts(contactos)
     }
+
+    val readContacts_requestPermissionsLauncher =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
+            if (isGranted) {
+                openDialogContacts()
+            }
+        }
 
     private fun enviarPorWhastsapp() {
         val intent = Intent(Intent.ACTION_SEND)
@@ -235,27 +239,30 @@ class DetalleNotasActivity : AppCompatActivity() {
         return stringTareas
     }
 
-    private fun openDialogContacts(contactos: ArrayList<Contacto>) {
+    private fun openDialogContacts() {
+        val contactos = obtenerContactos()
         lateinit var contacto: Contacto
         val dialogView = layoutInflater.inflate(R.layout.contactos_list, null)
         rvContactos = dialogView.findViewById(R.id.rvContactos)
         rvContactos.setHasFixedSize(true)
         rvContactos.layoutManager = LinearLayoutManager(this)
-        val listaContactos = contactos.sortedBy { it.nombre }
-        newContactosAdapter(
-            ContactosAdapter(
-                this,
-                listaContactos
-            )
-        )
+        val listaContactos = contactos.sortedBy {
+            var nombre = it.nombre
+            nombre = nombre.replace("Á", "A")
+            nombre = nombre.replace("É", "E")
+            nombre = nombre.replace("Í", "I")
+            nombre = nombre.replace("Ó", "O")
+            nombre = nombre.replace("Ú", "U")
+            nombre
+        }
+        newContactosAdapter(ContactosAdapter(this, listaContactos))
         if (contactos.size > 0) {
             AlertDialog.Builder(this)
                 .setTitle(getString(R.string.strContactos))
                 .setView(dialogView)
                 .setPositiveButton("OK") { dialog, _ ->
                     if (adaptadorContactos.isSelected()) {
-                        contacto = adaptadorContactos.getSelected()
-                        enviarSMS(contacto)
+                        enviarSMS()
                         dialog.dismiss()
                     } else {
                         Toast.makeText(
@@ -268,10 +275,10 @@ class DetalleNotasActivity : AppCompatActivity() {
                 .setCancelable(true)
                 .create()
                 .show()
-        } else Toast.makeText(this, "No existen contactos", Toast.LENGTH_SHORT).show()
+        } else Toast.makeText(this, getString(R.string.strSinContactos), Toast.LENGTH_SHORT).show()
     }
 
-    private fun enviarSMS(contacto: Contacto) {
+    private fun enviarSMS() {
         val pm = this.packageManager
         //Esta es una comprobación previa para ver si mi dispositivo puede enviar sms o no.
         if (pm.hasSystemFeature(PackageManager.FEATURE_TELEPHONY) || pm.hasSystemFeature(
@@ -281,16 +288,19 @@ class DetalleNotasActivity : AppCompatActivity() {
             val permissionCheck =
                 ContextCompat.checkSelfPermission(this, Manifest.permission.SEND_SMS)
             if (permissionCheck == PackageManager.PERMISSION_GRANTED) {
-                sendSMS(contacto)
+                sendSMS()
             } else {
-                ActivityCompat.requestPermissions(
-                    this,
-                    arrayOf(Manifest.permission.SEND_SMS),
-                    101
-                )
+                sendSMS_requestPermissionsLauncher.launch(Manifest.permission.SEND_SMS)
             }
         }
     }
+
+    val sendSMS_requestPermissionsLauncher =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
+            if (isGranted) {
+                sendSMS()
+            }
+        }
 
     override fun onRequestPermissionsResult(
         requestCode: Int,
@@ -309,7 +319,8 @@ class DetalleNotasActivity : AppCompatActivity() {
         }
     }
 
-    private fun sendSMS(contacto: Contacto) {
+    private fun sendSMS() {
+        val contacto = adaptadorContactos.getSelected()
         var myNumber: String = contacto.numero
         myNumber = myNumber.replace(" ", "")
         myNumber = myNumber.replace("+34", "")
@@ -319,40 +330,13 @@ class DetalleNotasActivity : AppCompatActivity() {
             smsManager.sendTextMessage(myNumber, null, myMsg, null, null)
             Toast.makeText(this, getString(R.string.strMensajeEnviado), Toast.LENGTH_SHORT).show()
         } else {
-            Toast.makeText(this, "El número no es correcto...", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(R.string.strNumeroIncorrecto), Toast.LENGTH_SHORT).show()
         }
     }
 
     private fun newContactosAdapter(adaptador: ContactosAdapter) {
         adaptadorContactos = adaptador
         rvContactos.adapter = adaptadorContactos
-    }
-
-    private fun requestPermission() {
-        if (ActivityCompat.shouldShowRequestPermissionRationale(
-                this,
-                Manifest.permission.READ_CONTACTS
-            )
-        ) {
-        } else {
-            ActivityCompat.requestPermissions(
-                this,
-                arrayOf(Manifest.permission.READ_CONTACTS),
-                79
-            )
-        }
-        if (ActivityCompat.shouldShowRequestPermissionRationale(
-                this,
-                Manifest.permission.READ_CONTACTS
-            )
-        ) {
-        } else {
-            ActivityCompat.requestPermissions(
-                this,
-                arrayOf(Manifest.permission.READ_CONTACTS),
-                79
-            )
-        }
     }
 
     fun addTarea(view: View) {
@@ -399,14 +383,12 @@ class DetalleNotasActivity : AppCompatActivity() {
                             arrayOf(id),
                             null
                         )
-                        //Sacamos todos los números de ese contacto.
                         if (pCur!!.moveToFirst()) {
                             val phoneNo = pCur!!.getString(
                                 pCur!!.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER)
                                     .toInt()
                             )
                             contactos.add(Contacto(nombre, phoneNo))
-                            //Esto son los números asociados a ese contacto. Ahora mismo no hacemos nada con ellos.
                         }
                         pCur!!.close()
                     }
@@ -474,10 +456,11 @@ class DetalleNotasActivity : AppCompatActivity() {
         return yearAct.toInt() - yearMod.toInt()
     }
 
+
     public override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         when (requestCode) {
-            cameraRequest -> {
+            Auxiliar.CODE_CAMERA -> {
                 if (resultCode == Activity.RESULT_OK) {
                     if (adaptadorTareas.tareaChanged != null) {
                         var photo = data?.extras?.get("data") as Bitmap
@@ -489,19 +472,19 @@ class DetalleNotasActivity : AppCompatActivity() {
                 if (resultCode === Activity.RESULT_OK) {
                     val selectedImage = data?.data
                     val selectedPath: String? = selectedImage?.path
-                        if (selectedPath != null) {
-                            var imageStream: InputStream? = null
-                            try {
-                                imageStream = selectedImage.let {
-                                    contentResolver.openInputStream(
-                                        it
-                                    )
-                                }
-                            } catch (e: FileNotFoundException) {
-                                e.printStackTrace()
+                    if (selectedPath != null) {
+                        var imageStream: InputStream? = null
+                        try {
+                            imageStream = selectedImage.let {
+                                contentResolver.openInputStream(
+                                    it
+                                )
                             }
-                            val bmp = BitmapFactory.decodeStream(imageStream)
-                            cambiarImagen(Bitmap.createScaledBitmap(bmp,200,300,true))
+                        } catch (e: FileNotFoundException) {
+                            e.printStackTrace()
+                        }
+                        val bmp = BitmapFactory.decodeStream(imageStream)
+                        cambiarImagen(Bitmap.createScaledBitmap(bmp, 200, 300, true))
                     }
                 }
             }

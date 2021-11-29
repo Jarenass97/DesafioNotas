@@ -31,4 +31,6 @@
     <string name="strMensajeElegirFoto">How do you want to add the photo?</string>
     <string name="strCamara">Camera</string>
     <string name="strGaleria">Gallery</string>
+    <string name="strSinContactos">There are no contacts</string>
+    <string name="strNumeroIncorrecto">The number is not correct</string>
 </resources>

@@ -72,7 +72,6 @@ class TareasAdapter(
         val imagen = view.findViewById<ImageButton>(R.id.imgTarea)
         val descTarea = view.findViewById<TextView>(R.id.txtTarea)
         val checked = view.findViewById<ImageView>(R.id.imgCheck)
-        val cameraRequest = 1888
 
         @RequiresApi(Build.VERSION_CODES.M)
         fun bind(tarea: Tarea, context: AppCompatActivity, pos: Int, tareasAdapter: TareasAdapter) {
@@ -164,10 +163,10 @@ class TareasAdapter(
                 ActivityCompat.requestPermissions(
                     ventana,
                     arrayOf(Manifest.permission.CAMERA),
-                    cameraRequest
+                    Auxiliar.CODE_CAMERA
                 )
             val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-            ventana.startActivityForResult(intent, cameraRequest)
+            ventana.startActivityForResult(intent, Auxiliar.CODE_CAMERA)
         }
 
         private fun marcarSeleccion(tareasAdapter: TareasAdapter, pos: Int) {
