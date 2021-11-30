@@ -3,21 +3,23 @@ package com.example.desafionotas
 import adapters.ContactosAdapter
 import adapters.TareasAdapter
 import android.Manifest
+import android.annotation.SuppressLint
 import android.app.Activity
+import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.database.Cursor
 import android.graphics.Bitmap
+import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.ContactsContract
-import android.provider.MediaStore
 import android.telephony.SmsManager
 import android.text.TextUtils
 import android.util.Log
+import android.view.MotionEvent
 import android.view.View
 import android.widget.*
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -28,6 +30,12 @@ import assistant.Auxiliar
 import assistant.TipoNota
 import connection.Conexion
 import model.*
+import android.graphics.BitmapFactory
+import androidx.activity.result.contract.ActivityResultContracts
+import java.io.FileNotFoundException
+import java.io.InputStream
+import java.text.Normalizer
+
 
 class DetalleNotasActivity : AppCompatActivity() {
     lateinit var nota: Nota
@@ -42,7 +50,7 @@ class DetalleNotasActivity : AppCompatActivity() {
     lateinit var adaptadorContactos: ContactosAdapter
     lateinit var rvContactos: RecyclerView
     lateinit var btnCompartir: ImageButton
-    private val cameraRequest = 1888
+    lateinit var btnGuardar: ImageButton
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -57,6 +65,7 @@ class DetalleNotasActivity : AppCompatActivity() {
         edTexto = findViewById(R.id.edTextoDetalle)
         animator = findViewById(R.id.vaTiposNota)
         btnCompartir = findViewById(R.id.btnCompartirNota)
+        btnGuardar = findViewById(R.id.btnGuardarDetalle)
         rvTareas = findViewById(R.id.rvTareas)
         rvTareas.setHasFixedSize(true)
         rvTareas.layoutManager = LinearLayoutManager(this)
@@ -82,6 +91,7 @@ class DetalleNotasActivity : AppCompatActivity() {
     }
 
     private fun cargarDatos() {
+        asignarFuncionBotones()
         edAsunto.append(nota.asunto)
         txtLastMod.text = getUltimaModificacion()
         txtFechaHora.text = "${nota.fecha} - ${nota.hora}"
@@ -91,11 +101,34 @@ class DetalleNotasActivity : AppCompatActivity() {
             }
             TipoNota.LISTA_TAREAS -> {
                 animator.showNext()
-                btnCompartir.isVisible = false
                 listaTareas = Conexion.getTareas(this, nota.id)
                 newTareasAdapter(TareasAdapter(this, listaTareas))
             }
         }
+    }
+
+    @SuppressLint("ClickableViewAccessibility")
+    private fun asignarFuncionBotones() {
+        btnGuardar.setOnTouchListener(View.OnTouchListener { view, motionEvent ->
+            when (motionEvent.action) {
+                MotionEvent.ACTION_DOWN -> btnGuardar.setBackgroundResource(R.color.itemSelected)
+                MotionEvent.ACTION_UP -> {
+                    btnGuardar.setBackgroundColor(Color.TRANSPARENT)
+                    btnGuardar()
+                }
+            }
+            true
+        })
+        btnCompartir.setOnTouchListener(View.OnTouchListener { view, motionEvent ->
+            when (motionEvent.action) {
+                MotionEvent.ACTION_DOWN -> btnCompartir.setBackgroundResource(R.color.itemSelected)
+                MotionEvent.ACTION_UP -> {
+                    btnCompartir.setBackgroundColor(Color.TRANSPARENT)
+                    compartir()
+                }
+            }
+            true
+        })
     }
 
     fun newTareasAdapter(adaptador: TareasAdapter) {
@@ -103,13 +136,15 @@ class DetalleNotasActivity : AppCompatActivity() {
         rvTareas.adapter = adaptadorTareas
     }
 
-    fun btnGuardar(view: View) {
+    fun btnGuardar() {
         guardar()
         finish()
     }
 
     private fun guardar() {
-        Conexion.modAsuntoNota(this, nota, edAsunto.text.toString().trim())
+        var newAsunto = edAsunto.text.toString().trim()
+        if (newAsunto.isEmpty()) newAsunto = getString(R.string.strSinAsunto)
+        Conexion.modAsuntoNota(this, nota, newAsunto)
         when (nota.tipo) {
             TipoNota.TEXTO -> Conexion.modTextoNota(this, nota, edTexto.text.toString().trim())
             TipoNota.LISTA_TAREAS -> Conexion.guardarTareas(
@@ -122,36 +157,112 @@ class DetalleNotasActivity : AppCompatActivity() {
         Toast.makeText(this, "Guardado", Toast.LENGTH_SHORT).show()
     }
 
-    fun compartir(view: View) {
+    fun compartir() {
         btnCompartir.isEnabled = false
-        var contactos: ArrayList<Contacto>
-        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.READ_CONTACTS)
-            == PackageManager.PERMISSION_GRANTED
-        ) {
-            contactos = obtenerContactos()
-        } else {
-            requestPermission();
-            contactos = obtenerContactos()
-        }
-        openDialogContacts(contactos)
+        enviar()
         btnCompartir.isEnabled = true
     }
 
-    private fun openDialogContacts(contactos: ArrayList<Contacto>) {
+    private fun enviar() {
+        when (nota.tipo) {
+            TipoNota.TEXTO -> {
+                (nota as NotaTexto).texto = edTexto.text.toString()
+                AlertDialog.Builder(this)
+                    .setTitle(getString(R.string.strTituloCompartir))
+                    .setMessage(getString(R.string.strMensajeCompartir))
+                    .setPositiveButton("Whatsapp") { view, _ ->
+                        enviarPorWhastsapp()
+                        view.dismiss()
+                    }
+                    .setNegativeButton("SMS") { view, _ ->
+                        enviarPorSMS()
+                        view.dismiss()
+                    }
+                    .setCancelable(true)
+                    .create()
+                    .show()
+            }
+            TipoNota.LISTA_TAREAS -> {
+                guardar()
+                enviarPorWhastsapp()
+            }
+        }
+    }
+
+    private fun enviarPorSMS() {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_CONTACTS)
+            == PackageManager.PERMISSION_GRANTED
+        ) {
+            openDialogContacts()
+        } else {
+            readContacts_requestPermissionsLauncher.launch(Manifest.permission.READ_CONTACTS)
+        }
+    }
+
+    val readContacts_requestPermissionsLauncher =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
+            if (isGranted) {
+                openDialogContacts()
+            }
+        }
+
+    private fun enviarPorWhastsapp() {
+        val intent = Intent(Intent.ACTION_SEND)
+        intent.type = "text/plain"
+        intent.setPackage("com.whatsapp")
+        when (nota.tipo) {
+            TipoNota.TEXTO -> intent.putExtra(
+                Intent.EXTRA_TEXT,
+                "*Asunto:* ${nota.asunto}\n*Contenido:*\n${(nota as NotaTexto).texto}"
+            )
+            TipoNota.LISTA_TAREAS -> intent.putExtra(
+                Intent.EXTRA_TEXT,
+                "*Asunto:* ${nota.asunto}\n*Contenido:*\n${tareasToString()}"
+            )
+        }
+
+        try {
+            startActivity(intent)
+        } catch (ex: ActivityNotFoundException) {
+            ex.printStackTrace()
+            Toast.makeText(this, getString(R.string.strWhatsappNoInstalado), Toast.LENGTH_SHORT)
+                .show()
+        }
+    }
+
+    private fun tareasToString(): String {
+        val tareas = Conexion.getTareas(this, nota.id)
+        var stringTareas = ""
+        for (t in tareas) {
+            stringTareas += "- $t\n"
+        }
+        return stringTareas
+    }
+
+    private fun openDialogContacts() {
+        val contactos = obtenerContactos()
         lateinit var contacto: Contacto
         val dialogView = layoutInflater.inflate(R.layout.contactos_list, null)
         rvContactos = dialogView.findViewById(R.id.rvContactos)
         rvContactos.setHasFixedSize(true)
         rvContactos.layoutManager = LinearLayoutManager(this)
-        newContactosAdapter(ContactosAdapter(this, contactos))
+        val listaContactos = contactos.sortedBy {
+            var nombre = it.nombre
+            nombre = nombre.replace("Á", "A")
+            nombre = nombre.replace("É", "E")
+            nombre = nombre.replace("Í", "I")
+            nombre = nombre.replace("Ó", "O")
+            nombre = nombre.replace("Ú", "U")
+            nombre
+        }
+        newContactosAdapter(ContactosAdapter(this, listaContactos))
         if (contactos.size > 0) {
             AlertDialog.Builder(this)
                 .setTitle(getString(R.string.strContactos))
                 .setView(dialogView)
                 .setPositiveButton("OK") { dialog, _ ->
                     if (adaptadorContactos.isSelected()) {
-                        contacto = adaptadorContactos.getSelected()
-                        enviarSMS(contacto)
+                        enviarSMS()
                         dialog.dismiss()
                     } else {
                         Toast.makeText(
@@ -164,10 +275,10 @@ class DetalleNotasActivity : AppCompatActivity() {
                 .setCancelable(true)
                 .create()
                 .show()
-        } else Toast.makeText(this, "No existen contactos", Toast.LENGTH_SHORT).show()
+        } else Toast.makeText(this, getString(R.string.strSinContactos), Toast.LENGTH_SHORT).show()
     }
 
-    private fun enviarSMS(contacto: Contacto) {
+    private fun enviarSMS() {
         val pm = this.packageManager
         //Esta es una comprobación previa para ver si mi dispositivo puede enviar sms o no.
         if (pm.hasSystemFeature(PackageManager.FEATURE_TELEPHONY) || pm.hasSystemFeature(
@@ -177,16 +288,19 @@ class DetalleNotasActivity : AppCompatActivity() {
             val permissionCheck =
                 ContextCompat.checkSelfPermission(this, Manifest.permission.SEND_SMS)
             if (permissionCheck == PackageManager.PERMISSION_GRANTED) {
-                sendSMS(contacto)
+                sendSMS()
             } else {
-                ActivityCompat.requestPermissions(
-                    this,
-                    arrayOf(Manifest.permission.SEND_SMS),
-                    101
-                )
+                sendSMS_requestPermissionsLauncher.launch(Manifest.permission.SEND_SMS)
             }
         }
     }
+
+    val sendSMS_requestPermissionsLauncher =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
+            if (isGranted) {
+                sendSMS()
+            }
+        }
 
     override fun onRequestPermissionsResult(
         requestCode: Int,
@@ -196,7 +310,6 @@ class DetalleNotasActivity : AppCompatActivity() {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == 101) {
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                sendSMS(adaptadorContactos.getSelected())
             } else {
                 Toast.makeText(
                     this, "No tienes los permisos requeridos...",
@@ -206,50 +319,24 @@ class DetalleNotasActivity : AppCompatActivity() {
         }
     }
 
-    private fun sendSMS(contacto: Contacto) {
+    private fun sendSMS() {
+        val contacto = adaptadorContactos.getSelected()
         var myNumber: String = contacto.numero
         myNumber = myNumber.replace(" ", "")
         myNumber = myNumber.replace("+34", "")
-        val myMsg = "${nota.asunto}:\n ${(nota as NotaTexto).texto}"
+        val myMsg = "${nota.asunto}:\n${(nota as NotaTexto).texto}"
         if (TextUtils.isDigitsOnly(myNumber)) {
             val smsManager: SmsManager = SmsManager.getDefault()
             smsManager.sendTextMessage(myNumber, null, myMsg, null, null)
             Toast.makeText(this, getString(R.string.strMensajeEnviado), Toast.LENGTH_SHORT).show()
         } else {
-            Toast.makeText(this, "El número no es correcto...", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(R.string.strNumeroIncorrecto), Toast.LENGTH_SHORT).show()
         }
     }
 
     private fun newContactosAdapter(adaptador: ContactosAdapter) {
         adaptadorContactos = adaptador
         rvContactos.adapter = adaptadorContactos
-    }
-
-    private fun requestPermission() {
-        if (ActivityCompat.shouldShowRequestPermissionRationale(
-                this,
-                Manifest.permission.READ_CONTACTS
-            )
-        ) {
-        } else {
-            ActivityCompat.requestPermissions(
-                this,
-                arrayOf(Manifest.permission.READ_CONTACTS),
-                79
-            )
-        }
-        if (ActivityCompat.shouldShowRequestPermissionRationale(
-                this,
-                Manifest.permission.READ_CONTACTS
-            )
-        ) {
-        } else {
-            ActivityCompat.requestPermissions(
-                this,
-                arrayOf(Manifest.permission.READ_CONTACTS),
-                79
-            )
-        }
     }
 
     fun addTarea(view: View) {
@@ -296,14 +383,12 @@ class DetalleNotasActivity : AppCompatActivity() {
                             arrayOf(id),
                             null
                         )
-                        //Sacamos todos los números de ese contacto.
                         if (pCur!!.moveToFirst()) {
                             val phoneNo = pCur!!.getString(
                                 pCur!!.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER)
                                     .toInt()
                             )
                             contactos.add(Contacto(nombre, phoneNo))
-                            //Esto son los números asociados a ese contacto. Ahora mismo no hacemos nada con ellos.
                         }
                         pCur!!.close()
                     }
@@ -371,18 +456,47 @@ class DetalleNotasActivity : AppCompatActivity() {
         return yearAct.toInt() - yearMod.toInt()
     }
 
+
     public override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == cameraRequest && resultCode == Activity.RESULT_OK) {
-            if (adaptadorTareas.tareaChanged != null) {
-                var photo = data?.extras?.get("data") as Bitmap
-                val tareas = adaptadorTareas.tareas
-                val tareaChanged = adaptadorTareas.tareaChanged!!
-                val newTarea = tareaChanged
-                newTarea.img = photo
-                tareas[tareas.indexOf(tareaChanged)] = newTarea
-                newTareasAdapter(TareasAdapter(this, tareas, adaptadorTareas.eliminables))
+        when (requestCode) {
+            Auxiliar.CODE_CAMERA -> {
+                if (resultCode == Activity.RESULT_OK) {
+                    if (adaptadorTareas.tareaChanged != null) {
+                        var photo = data?.extras?.get("data") as Bitmap
+                        cambiarImagen(photo)
+                    }
+                }
+            }
+            Auxiliar.CODE_GALLERY -> {
+                if (resultCode === Activity.RESULT_OK) {
+                    val selectedImage = data?.data
+                    val selectedPath: String? = selectedImage?.path
+                    if (selectedPath != null) {
+                        var imageStream: InputStream? = null
+                        try {
+                            imageStream = selectedImage.let {
+                                contentResolver.openInputStream(
+                                    it
+                                )
+                            }
+                        } catch (e: FileNotFoundException) {
+                            e.printStackTrace()
+                        }
+                        val bmp = BitmapFactory.decodeStream(imageStream)
+                        cambiarImagen(Bitmap.createScaledBitmap(bmp, 200, 300, true))
+                    }
+                }
             }
         }
+    }
+
+    private fun cambiarImagen(image: Bitmap) {
+        val tareas = adaptadorTareas.tareas
+        val tareaChanged = adaptadorTareas.tareaChanged!!
+        val newTarea = tareaChanged
+        newTarea.img = image
+        tareas[tareas.indexOf(tareaChanged)] = newTarea
+        newTareasAdapter(TareasAdapter(this, tareas, adaptadorTareas.eliminables))
     }
 }

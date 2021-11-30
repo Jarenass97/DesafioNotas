@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Notes</string>
+    <string name="app_name">JarenasColorNote</string>
     <string name="strTituloTipo">Note type</string>
     <string name="strMensajeTipo">What kind of note do you want to create?</string>
     <string name="strTipoTexto">Text</string>
@@ -24,4 +24,13 @@
     <string name="strContactoNoSeleccionado">You have not selected any contact</string>
     <string name="strSinAsunto">No subject</string>
     <string name="strIndefinida">Indefinite</string>
+    <string name="strTituloCompartir">Share</string>
+    <string name="strMensajeCompartir">How do you want to share the content?</string>
+    <string name="strWhatsappNoInstalado">Your device doesn´t have whatsapp installed</string>
+    <string name="strElegirFoto">Choose photo</string>
+    <string name="strMensajeElegirFoto">How do you want to add the photo?</string>
+    <string name="strCamara">Camera</string>
+    <string name="strGaleria">Gallery</string>
+    <string name="strSinContactos">There are no contacts</string>
+    <string name="strNumeroIncorrecto">The number is not correct</string>
 </resources>

@@ -23,7 +23,7 @@ object Conexion {
         reg.put(Auxiliar.ASUNTO__NOTAS, nota.asunto)
         reg.put(Auxiliar.TIPO__NOTAS, if (nota.tipo == TipoNota.TEXTO) 0 else 1)
         bd.insert(Auxiliar.TABLA__NOTAS, null, reg)
-        addTexto(bd, nota.id)
+        if (nota.tipo == TipoNota.TEXTO) addTexto(bd, nota.id)
         bd.close()
     }
 
@@ -233,5 +233,42 @@ object Conexion {
             )
         }
         bd.close()
+    }
+
+    fun findNotasByAsunto(context: Context, asunto: String): ArrayList<Nota> {
+        val notas = ArrayList<Nota>(0)
+        val admin = AdminSQLiteConnection(context, nombreBD, null, 1)
+        val bd = admin.writableDatabase
+        val reg = bd.rawQuery(
+            "select ${Auxiliar.ID__NOTAS}, ${Auxiliar.FECHA__NOTAS}, ${Auxiliar.HORA__NOTAS}, ${Auxiliar.ASUNTO__NOTAS}, ${Auxiliar.TIPO__NOTAS} from ${Auxiliar.TABLA__NOTAS} where ${Auxiliar.ASUNTO__NOTAS} like '%$asunto%'",
+            null
+        )
+        while (reg.moveToNext()) {
+            val id = reg.getInt(0)
+            val tipo = reg.getInt(4)
+            when (tipo) {
+                0 ->
+                    notas.add(
+                        NotaTexto(
+                            id,
+                            reg.getString(1),
+                            reg.getString(2),
+                            reg.getString(3),
+                            getTexto(bd, id)
+                        )
+                    )
+                1 ->
+                    notas.add(
+                        NotaTareas(
+                            id,
+                            reg.getString(1),
+                            reg.getString(2),
+                            reg.getString(3)
+                        )
+                    )
+            }
+        }
+        bd.close()
+        return notas
     }
 }

@@ -8,41 +8,59 @@
     android:orientation="vertical"
     tools:context=".DetalleNotasActivity">
 
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/linearLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/FondoNotaSeleccionada"
-        android:orientation="horizontal"
         android:paddingTop="20dp"
         android:paddingBottom="20dp">
 
         <EditText
             android:id="@+id/edAsuntoDetalle"
-            style="@style/InputText"
-            android:layout_width="260dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
             android:ems="10"
             android:hint="@string/strTituloAsunto"
             android:inputType="textPersonName"
-            android:maxLength="26" />
+            android:maxLength="26"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/btnCompartirNota"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <ImageButton
             android:id="@+id/btnCompartirNota"
             style="@style/imgButton"
-            android:layout_marginStart="20dp"
-            android:onClick="compartir"
-            app:srcCompat="@drawable/ic_baseline_share_24" />
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginEnd="20dp"
+            android:src="@drawable/share"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/btnGuardarDetalle"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.488" />
 
         <ImageButton
             android:id="@+id/btnGuardarDetalle"
             style="@style/imgButton"
-            android:layout_marginStart="20dp"
-            android:onClick="btnGuardar"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginEnd="20dp"
             android:scaleType="fitCenter"
-            app:srcCompat="@drawable/ic_baseline_save_24" />
-    </LinearLayout>
+            android:src="@drawable/save"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.644" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <LinearLayout
         android:id="@+id/linearLayout2"
@@ -82,17 +100,12 @@
 
             <EditText
                 android:id="@+id/edTextoDetalle"
+                style="@style/textoNota.color"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:background="@drawable/plantilla"
-                android:backgroundTint="#8A8686"
                 android:ems="10"
-                android:gravity="start|top"
-                android:inputType="textMultiLine"
-                android:paddingLeft="20dp"
-                android:paddingRight="20dp"
-                android:textSize="24dp" />
+                android:inputType="textMultiLine" />
 
         </LinearLayout>
 

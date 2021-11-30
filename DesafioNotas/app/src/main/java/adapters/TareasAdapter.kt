@@ -1,15 +1,18 @@
 package adapters
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
+import android.graphics.Color
 import android.graphics.Paint
 import android.os.Build
 import android.provider.MediaStore
 import android.util.Log
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
@@ -27,6 +30,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.desafionotas.DetalleNotasActivity
 import com.example.desafionotas.R
 import model.Tarea
+import androidx.core.app.ActivityCompat.startActivityForResult
+import assistant.Auxiliar
+
 
 class TareasAdapter(
     var context: DetalleNotasActivity,
@@ -66,7 +72,6 @@ class TareasAdapter(
         val imagen = view.findViewById<ImageButton>(R.id.imgTarea)
         val descTarea = view.findViewById<TextView>(R.id.txtTarea)
         val checked = view.findViewById<ImageView>(R.id.imgCheck)
-        val cameraRequest = 1888
 
         @RequiresApi(Build.VERSION_CODES.M)
         fun bind(tarea: Tarea, context: AppCompatActivity, pos: Int, tareasAdapter: TareasAdapter) {
@@ -82,9 +87,16 @@ class TareasAdapter(
                 paintFlags = Paint.ANTI_ALIAS_FLAG
                 setTextAppearance(R.style.txtTareaNoRealizada)
             }
-            imagen.setOnClickListener(View.OnClickListener {
-                tareasAdapter.tareaChanged = tarea
-                hacerFoto(tareasAdapter, tarea)
+            imagen.setOnTouchListener(View.OnTouchListener { view, motionEvent ->
+                when (motionEvent.action) {
+                    MotionEvent.ACTION_DOWN -> imagen.setBackgroundColor(Color.DKGRAY)
+                    MotionEvent.ACTION_UP -> {
+                        imagen.setBackgroundColor(Color.TRANSPARENT)
+                        tareasAdapter.tareaChanged = tarea
+                        CambiarFoto()
+                    }
+                }
+                true
             })
             itemView.setOnClickListener(View.OnClickListener {
                 tarea.realizada = !tarea.realizada
@@ -115,7 +127,34 @@ class TareasAdapter(
             })
         }
 
-        private fun hacerFoto(tareasAdapter: TareasAdapter, tarea: Tarea) {
+        private fun CambiarFoto() {
+            AlertDialog.Builder(ventana)
+                .setTitle(ventana.getString(R.string.strElegirFoto))
+                .setMessage(ventana.getString(R.string.strMensajeElegirFoto))
+                .setPositiveButton(ventana.getString(R.string.strCamara)) { view, _ ->
+                    hacerFoto()
+                    view.dismiss()
+                }
+                .setNegativeButton(ventana.getString(R.string.strGaleria)) { view, _ ->
+                    elegirDeGaleria()
+                    view.dismiss()
+                }
+                .setCancelable(true)
+                .create()
+                .show()
+        }
+
+        private fun elegirDeGaleria() {
+            val intent = Intent()
+            intent.type = "image/*"
+            intent.action = Intent.ACTION_GET_CONTENT
+            ventana.startActivityForResult(
+                Intent.createChooser(intent, "Seleccione una imagen"),
+                Auxiliar.CODE_GALLERY
+            )
+        }
+
+        private fun hacerFoto() {
             if (ContextCompat.checkSelfPermission(
                     ventana,
                     Manifest.permission.CAMERA
@@ -124,10 +163,10 @@ class TareasAdapter(
                 ActivityCompat.requestPermissions(
                     ventana,
                     arrayOf(Manifest.permission.CAMERA),
-                    cameraRequest
+                    Auxiliar.CODE_CAMERA
                 )
             val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-            ventana.startActivityForResult(intent, cameraRequest)
+            ventana.startActivityForResult(intent, Auxiliar.CODE_CAMERA)
         }
 
         private fun marcarSeleccion(tareasAdapter: TareasAdapter, pos: Int) {

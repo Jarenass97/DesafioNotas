@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Notas</string>
+    <string name="app_name">JarenasColorNote</string>
     <string name="strTituloTipo">Tipo de nota</string>
     <string name="strMensajeTipo">¿Qué tipo de nota quiere crear?</string>
     <string name="strTipoTexto">Texto</string>
@@ -25,4 +25,13 @@
     <string name="strContactoNoSeleccionado">No has seleccionado ningún contacto</string>
     <string name="strSinAsunto">Sin asunto</string>
     <string name="strIndefinida">Indefinida</string>
+    <string name="strTituloCompartir">Compartir</string>
+    <string name="strMensajeCompartir">¿Cómo quiere compartir el contenido?</string>
+    <string name="strWhatsappNoInstalado">Tu dispositivo no tiene whatsapp instalado</string>
+    <string name="strElegirFoto">Elegir foto</string>
+    <string name="strMensajeElegirFoto">¿Cómo quiere añadir la foto?</string>
+    <string name="strCamara">Cámara</string>
+    <string name="strGaleria">Galeria</string>
+    <string name="strSinContactos">No existen contactos</string>
+    <string name="strNumeroIncorrecto">El número no es correcto</string>
 </resources>
