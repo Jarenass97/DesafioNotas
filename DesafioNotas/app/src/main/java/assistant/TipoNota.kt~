@@ -1,0 +1,4 @@
+package assistant
+
+enum class TipoNota {
+}

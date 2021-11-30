@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">JarenasColorNote</string>
+    <string name="strTituloTipo">" Type de note"</string>
+    <string name="strMensajeTipo">Quel type de note voulez-vous créer ?</string>
+    <string name="strTipoTexto">Texte</string>
+    <string name="strTipoTareas">"Choses à faire "</string>
+    <string name="strTituloBorrar">Supprimer</string>
+    <string name="strMensajeBorrar">"Êtes-vous sûr de supprimer cette? "</string>
+    <string name="strConfirmacion">Oui</string>
+    <string name="strNegacion">Non</string>
+    <string name="strEliminando">Retrait</string>
+    <string name="strTituloAsunto">Affaire</string>
+    <string name="strHaceYears">years ago</string>
+    <string name="strHaceMeses">months ago</string>
+    <string name="strHaceDias">days ago</string>
+    <string name="strHaceHoras">hours ago</string>
+    <string name="strHaceMinutos">minutes ago</string>
+    <string name="strMenosUnMin">less than a minute ago</string>
+    <string name="strTarea">Remarques</string>
+    <string name="strContactos">Contact</string>
+    <string name="strMensajeEnviado">"message envoyé "</string>
+    <string name="strTituloGuardar">" Sauvegarder les modifications"</string>
+    <string name="strMensajeGuardar">" Souhaitez-vous enregistrer les modifications ?"</string>
+    <string name="strContactoNoSeleccionado">" Vous n'avez sélectionné aucun contact"</string>
+    <string name="strSinAsunto">" Pas de sujet"</string>
+    <string name="strIndefinida">" Indéfinie"</string>
+    <string name="strTituloCompartir">Partager</string>
+    <string name="strMensajeCompartir">" Comment voulez-vous partager le contenu ?"</string>
+    <string name="strWhatsappNoInstalado">" WhatsApp n'est pas installé sur votre appareil"</string>
+    <string name="strElegirFoto">Choisissez la photo</string>
+    <string name="strMensajeElegirFoto">Comment voulez-vous ajouter la photo ?</string>
+    <string name="strCamara">Caméra</string>
+    <string name="strGaleria">Galerie</string>
+    <string name="strSinContactos">" il n'y a pas de contacts"</string>
+    <string name="strNumeroIncorrecto">" Le numéro n'est pas correct"</string>
+</resources>
