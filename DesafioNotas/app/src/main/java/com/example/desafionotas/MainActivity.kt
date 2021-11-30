@@ -4,10 +4,13 @@ import adapters.NotasAdapter
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.text.TextWatcher
+import android.util.Log
 import android.view.View
 import android.widget.EditText
 import androidx.appcompat.app.AlertDialog
 import androidx.core.view.isVisible
+import androidx.core.widget.addTextChangedListener
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import assistant.Auxiliar
@@ -22,10 +25,12 @@ class MainActivity : AppCompatActivity() {
     lateinit var adaptador: NotasAdapter
     lateinit var notasList: ArrayList<Nota>
     lateinit var btnEditar: FloatingActionButton
+    lateinit var edBusqueda: EditText
     override fun onCreate(savedInstanceState: Bundle?) {
         setTheme(R.style.Theme_DesafioNotas)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        supportActionBar?.hide()
 
         btnEditar = findViewById(R.id.btnEditarNota)
         rv = findViewById(R.id.rvNotas)
@@ -34,6 +39,13 @@ class MainActivity : AppCompatActivity() {
         notasList = Conexion.getNotas(this)
         adaptador = NotasAdapter(this, notasList)
         rv.adapter = adaptador
+
+        edBusqueda = findViewById(R.id.edBusqueda)
+        edBusqueda.addTextChangedListener(afterTextChanged = {
+            val notas = Conexion.findNotasByAsunto(this, edBusqueda.text.toString())
+            adaptador=NotasAdapter(this,notas)
+            rv.adapter=adaptador
+        })
 
         Auxiliar.nextIdNota = Conexion.getNextIdNota(this)
         Auxiliar.nextIdTarea = Conexion.getNextIdTarea(this)
